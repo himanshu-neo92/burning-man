@@ -9,7 +9,7 @@ namespace octet {
     {
     public:
         //construct with mass, mass will be converted to inverse mass
-        Particle(float mass = 1.0f) :lifetime_(0), friction_(1)
+        Particle(float mass = 1.0f) :lifetime_(0), friction_(1), enabledFlag_(false)
         {
             if (mass != 0)
             {
@@ -44,6 +44,8 @@ namespace octet {
             vec3 diff = (pos_ - oldPos_)*friction_ + acc_*dt;
             oldPos_ = pos_;
             pos_ += diff;
+            //decrease lifetime
+            lifetime_-=dt;
         }
         float GetInvMass()const
         {
@@ -101,16 +103,25 @@ namespace octet {
             friction_ = frict;
         }
 
+        bool GetEnabledFlag()const
+        {return enabledFlag_;}
+
+        void SetEnabledFlag(bool flag)
+        {enabledFlag_=flag;}
+
     private:
         vec3 pos_;
         vec3 oldPos_;
         vec3 acc_;
+
+        
 
 
         vec3 force_;
         float invMass_;
         float lifetime_;
         float friction_;
+        bool enabledFlag_;
     };
 }
 #endif
