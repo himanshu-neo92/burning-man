@@ -1,6 +1,8 @@
 #ifndef PARTICLE_SYSTEM_H
 #define PARTICLE_SYSTEM_H
 
+#include "../../octet.h"
+
 #include "Particle.h"
 #include "particle_emitter.h"
 namespace octet {
@@ -78,6 +80,7 @@ namespace octet {
                 }
                 else
                 {
+                    particles_[i]->AddForce(gravity_+SumForces());
                     particles_[i]->Update(dt);
                 }
             }
@@ -89,6 +92,15 @@ namespace octet {
             p->SetEnabledFlag(false);
             openPool_.push_back(p);
         }
+        vec3 SumForces()
+        {
+            vec3 sum;
+            for (int i = 0; i < forces_.size(); ++i)
+            {
+                sum+=forces_[i];
+            }
+            return sum;
+        }
 
     private:
       dynarray<Particle*> openPool_;
@@ -97,6 +109,9 @@ namespace octet {
       dynarray<smtEmitter> emitters_;
 
       int maxParticles_;
+
+      vec3 gravity_;
+      dynarray<vec3> forces_;
     };
 }
 

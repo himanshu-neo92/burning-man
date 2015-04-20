@@ -1,10 +1,9 @@
 #ifndef PARTICLE_H_INCLUDED
 #define PARTICLE_H_INCLUDED
 
-
+#include "../../octet.h"
 
 namespace octet {
-
     class Particle :public resource
     {
     public:
