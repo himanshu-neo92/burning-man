@@ -9,6 +9,7 @@
 
 #include "../../octet.h"
 
+#include "Particle.h"
 #include "buring_man.h"
 
 /// Create a box with octet
