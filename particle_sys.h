@@ -2,11 +2,11 @@
 #define PARTICLE_SYSTEM_H
 
 #include "../../octet.h"
-
 #include "Particle.h"
 #include "particle_emitter.h"
+
 namespace octet {
-    class particle_sys : public resource 
+    class particle_sys :public resource
     {
     public:
         typedef ref<Particle> smtPart;

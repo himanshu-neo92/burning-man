@@ -427,6 +427,15 @@
     <ClInclude Include="..\..\containers\string.h">
       <Filter>containers</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_emitter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_sys.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

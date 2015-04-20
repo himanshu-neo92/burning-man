@@ -4,7 +4,7 @@
 #include "../../octet.h"
 
 namespace octet {
-    class Particle :public resource
+    class Particle:public resource
     {
     public:
         //construct with mass, mass will be converted to inverse mass
