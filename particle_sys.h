@@ -36,13 +36,23 @@ namespace octet {
             maxParticles_=mp;
 
             
+            meshy_ = new mesh_box(vec3(1,1,1));
+            material* mat=new material(vec4(1,0,0,1));
+
             particles_.resize(maxParticles_);
             openPool_.reserve(maxParticles_);
+            meshies_.reserve(maxParticles_);
             for (int i = 0; i < maxParticles_; ++i)
             {
                 particles_[i]=new Particle();
                 openPool_.push_back(particles_[i]);
+
+                scene_node* s=new scene_node();
+                scene->add_scene_node(s);
+                meshies_.push_back(new mesh_instance(s,meshy_,mat));
+               scene->add_mesh_instance(meshies_.back());
             }
+
             srand(time(NULL));
         }
 
@@ -70,7 +80,10 @@ namespace octet {
         {
             for (int i = 0; i < particles_.size(); ++i)
             {
-                
+                if (particles_[i]->GetEnabledFlag())
+                {
+                    meshies_[i]->get_node()->access_nodeToParent().w() = particles_[i]->GetPos().xyz1();
+                }
 
 
             }
@@ -104,8 +117,24 @@ namespace octet {
                     particles_[i]->Update(dt);
                 }
             }
-
+            printf("%d",openPool_.size());
         }
+
+        void SetGravity(const vec3& v)
+        {
+            gravity_=v;
+        }
+
+        vec3 GetGravity()const
+        {
+           return gravity_;
+        }
+
+        void AddForce(const vec3& force)
+        {
+            forces_.push_back(force);
+        }
+
     private:
         void ReturnParticle(smtPart p)
         {
@@ -127,6 +156,10 @@ namespace octet {
 
       dynarray<smtPart> particles_;
       dynarray<smtEmitter> emitters_;
+
+      ref<mesh>  meshy_;
+
+      dynarray<ref<mesh_instance>> meshies_;
 
       int maxParticles_;
 

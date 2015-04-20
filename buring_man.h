@@ -85,14 +85,13 @@ namespace octet {
       app_scene->create_default_camera_and_lights();
       app_scene->get_camera_instance(0)->set_far_plane(10000);
       mat4t &camera_mat = app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
-      camera_mat.translate(0, 50, 0);
-      camera_mat.rotateY(-180);
-      camera_mat.rotateX(0);
+      camera_mat.translate(0, 0, -100);
+
 
       
-      system.Init(1,app_scene);
+      system.Init(20,app_scene);
 
-      particle_emitter *em =new particle_emitter(vec3(),vec3(0,1,0),1,1,1,50);
+      particle_emitter *em =new particle_emitter(vec3(),vec3(0,1,0),60,5,90,2);
 
       system.AddEmitter(em);
      
@@ -110,6 +109,7 @@ namespace octet {
       app_scene->update(1.0f/30);
       
       system.Update(1.0f/30);
+      system.Draw();
 
       // draw the scene
       app_scene->render((float)vx / vy);

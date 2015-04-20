@@ -44,7 +44,6 @@ namespace octet {
             oldPos_ = pos_;
             pos_ += diff;
 
-            printf("x:%f,y:%f,z%f \n",pos_.x(),pos_.y(),pos_.z());
             //decrease lifetime
             lifetime_-=dt;
         }

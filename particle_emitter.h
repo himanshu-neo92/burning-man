@@ -160,15 +160,17 @@ namespace octet {
             float temp_rot;
 
             temp_ran = rand();
-            temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
+            float timesNum=((((float)temp_ran/(float)RAND_MAX)*2)-1);
+
+            temp_rot = ((((float)temp_ran / (float)RAND_MAX) *2)-1) * (spread / 2);
             temp_rotation_mat.rotateX(temp_rot);
 
             temp_ran = rand();
-            temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
+            temp_rot = ((((float)temp_ran / (float)RAND_MAX) *2)-1) * (spread / 2);
             temp_rotation_mat.rotateY(temp_rot);
 
             temp_ran = rand();
-            temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
+            temp_rot = ((((float)temp_ran / (float)RAND_MAX) *2)-1) * (spread /2);
             temp_rotation_mat.rotateZ(temp_rot);
 
             temp_rotation_mat.translate(direction.x()*speed, direction.y()*speed, direction.z()*speed);
