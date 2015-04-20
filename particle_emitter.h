@@ -23,107 +23,45 @@ namespace octet {
   
   bool enabled;
 
-  void Spawn_particle(Particle * new_particle)
-  {
-   
-  }
+  void Spawn_particle(Particle * new_particle);
+  
   public :
 
-    particle_emitter(vec3 _position, vec3 _direction = vec3(0, 0, 1), int _max_particles = 1, float _nu_particles_per_sec = 1, float _spread = 1, float _particles_lifetime = 0.1f, float _friction_particle = 1.0f)
-    {
-      
-    }
-    ~particle_emitter()
-    {
+    particle_emitter(vec3 _position, vec3 _direction , int _max_particles, float _nu_particles_per_sec , float _spread , float _particles_lifetime , float _friction_particle );
     
-    }
+    ~particle_emitter();
+    
+    vec3 Get_position() const;
+    
+    void Set_position(vec3 _position);
+  
 
-    vec3 Get_position() const
-    {
-      
-    }
-    void Set_position(vec3 _position)
-    {
-      
-    }
+    vec3 Get_direction() const;
+    
+    void Set_direction(vec3 _direction);
 
-    vec3 Get_direction() const
-    {
-      
-    }
-    void Set_direction(vec3 _direction)
-    {
-      
-    }
+    float Get_nu_particles_per_sec() const;
+    void Set__nu_particles_per_sec(float _nu_particles_per_sec);
 
-    float Get_nu_particles_per_sec() const
-    {
-      
-    }
-    void Set__nu_particles_per_sec(float _nu_particles_per_sec)
-    {
-      
-    }
+    int Get_max_particles() const;
+    void Set_max_particles(int _max_particles);
+    float Get_spread() const;
+    void Set_spread(float _spread);
 
-    int Get_max_particles() const 
-    {
-      
-    }
-    void Set_max_particles(int _max_particles)
-    {
-     
-    }
+    float Get_particles_lifetime() const;
+    void Set_particles_lifetime(float _particles_lifetime);
 
-    float Get_spread() const
-    {
-      
-    }
-    void Set_spread(float _spread)
-    {
-      
-    }
+    float Get_friction_particle() const;
+    void Set_friction_particle(float _friction_particle);
 
-    float Get_particles_lifetime() const
-    {
-      
-    }
-    void Set_particles_lifetime(float _particles_lifetime)
-    {
-      
-    }
+    particle_sys* Get_sys_particle() const;
+    void Set_sys_particle(particle_sys* _sys_particle);
 
-    float Get_friction_particle() const
-    {
-      
-    }
-    void Set_friction_particle(float _friction_particle)
-    {
-      
-    }
-
-    particle_sys* Get_sys_particle() const
-    {
-      
-    }
-    void Set_sys_particle(particle_sys* _sys_particle)
-    {
-      
-    }
-
-    bool isenabled() const
-    {
-      
-    }
-    void Set_enabled(bool _enabled)
-    {
-     
-    }
+    bool isenabled() const;
+    void Set_enabled(bool _enabled);
    
 
-    void Update(float dt)
-    {
-      
-    }
+    void Update(float dt);
 
     
   };

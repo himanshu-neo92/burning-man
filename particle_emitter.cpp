@@ -2,6 +2,8 @@
 
 #include "particle_emitter.h"
 
+using namespace octet;
+
 void particle_emitter::Spawn_particle(Particle * new_particle)
 {
   //new_particle->
