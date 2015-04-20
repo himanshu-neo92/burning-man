@@ -25,7 +25,7 @@ namespace octet {
 
         bool enabled;
 
-        void Spawn_particle(Particle * new_particle);
+        
 
     public:
 
@@ -128,25 +128,23 @@ namespace octet {
         enabled = _enabled;
     }
 
-    void Update(float dt)
+    int Update(float dt)
     {
         dt_accumalation += dt;
         float num_particles_to_spawn = floorf(nu_particles_per_sec*dt_accumalation);
         if (num_particles_to_spawn >= 1)
-        {
-            for (int i = 0; i<num_particles_to_spawn; i++)
-            {
-                Particle * new_particle; //= sys_particle.get_new_particle();
-                if (new_particle)
-                {
-                    Spawn_particle(new_particle);
-                }
-                else
-                    break;
-
-            }
+        {         
             dt_accumalation = 0;
+            return num_particles_to_spawn;
         }
+    }
+
+    void Spawn_particle(dynarray<Particle &> spawn_particles)
+    {
+      for (int i=0;i<spawn_particles.size();i++)
+      {
+        
+      }
     }
     
   };
