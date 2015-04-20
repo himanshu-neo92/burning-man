@@ -36,7 +36,9 @@ public:
         acc_=force_*invMass_;
         force_=octet::vec3();
 
-        octet::vec3 diff = (pos_-oldPos_)*
+        octet::vec3 diff = (pos_-oldPos_)*friction_+acc_*dt;
+        oldPos_=pos_;
+        pos_+=diff;
     }
     float GetInvMass()const
     {return invMass_;}
