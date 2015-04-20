@@ -76,12 +76,18 @@ namespace octet {
             return force_;
         }
 
-        void SetPos(const vec3& pos)
+        void Translate(const vec3& pos)
         {
             vec3 diff = pos - pos_;
             pos_ += diff;
             oldPos_ += diff;
         }
+        void SetPos(const vec3& pos)
+        {
+            pos_=pos;
+            oldPos_=pos;
+        }
+
         vec3 GetPos()const
         {
             return pos_;
