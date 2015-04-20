@@ -33,7 +33,7 @@ namespace octet {
       particle_emitter(vec3 _position, vec3 _direction = vec3(0, 0, 1), int _max_particles = 1, float _nu_particles_per_sec = 1, float _spread = 1, float _particles_lifetime = 0.1f, float _friction_particle = 1.0f, float _particle_mass = 1.0f, float _speed=1.0f)
         {
             position = _position;
-            direction = _direction;
+            direction = _direction.normalize();
             nu_particles_per_sec = _nu_particles_per_sec;
             max_particles = _max_particles;
             spread = _spread;
@@ -171,7 +171,7 @@ namespace octet {
             temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
             temp_rotation_mat.rotateZ(temp_rot);
 
-            temp_rotation_mat.translate(direction.x(), direction.y(), direction.z());
+            temp_rotation_mat.translate(direction.x()*speed, direction.y()*speed, direction.z()*speed);
 
             spawn_particles->SetForce(vec3(temp_rotation_mat.w().x(), temp_rotation_mat.w().y(), temp_rotation_mat.w().z()));
 
