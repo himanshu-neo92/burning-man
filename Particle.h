@@ -46,6 +46,15 @@ namespace octet {
             //decrease lifetime
             lifetime_-=dt;
         }
+
+        vec3 Get_acc() const 
+        {
+          return acc_;
+        }
+        void Set_acc(vec3 _acc)
+        {
+          acc_ = _acc;
+        }
         float GetInvMass()const
         {
             return invMass_;
@@ -89,7 +98,7 @@ namespace octet {
 
         bool IsDead()const
         {
-            return lifetime_ > 0;
+            return lifetime_ < 0;
         }
 
         float GetFriction()const
