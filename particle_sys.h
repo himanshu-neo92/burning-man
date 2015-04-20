@@ -27,7 +27,7 @@ namespace octet {
         
         }
 
-        void Init(int mp)
+        void Init(int mp,)
         {
             maxParticles_=mp;
 
@@ -62,13 +62,28 @@ namespace octet {
         }
 
         void Draw()
-        {}
+        {
+            for (int i = 0; i < particles_.size(); ++i)
+            {
+                
+
+
+            }
+        }
 
         void Update(float dt)
         {
+            
             for (int i = 0; i < emitters_.size(); ++i)
             {
-                emitters_[i]->Update(dt);
+                int num=emitters_[i]->Update(dt);
+                if (num > 0)
+                {
+                    for (int i = 0; i < num; ++i)
+                    {
+                       emitters_[i]->Spawn_particle(GetNewParticle());
+                    }
+                }
             }
             
 
