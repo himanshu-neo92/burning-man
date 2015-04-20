@@ -146,39 +146,39 @@ namespace octet {
 
     void Spawn_particle(Particle * spawn_particles)
     {
-      if (spawn_particles!=nullptr)
-      {
-        spawn_particles->SetMass(particle_mass);
-        spawn_particles->SetFriction(friction_particle);
-        spawn_particles->SetLifetime(particles_lifetime);
-        spawn_particles->SetPos(position);
-        spawn_particles->Set_acc(vec3(0,0,0));
+        if (spawn_particles != nullptr)
+        {
+            spawn_particles->SetMass(particle_mass);
+            spawn_particles->SetFriction(friction_particle);
+            spawn_particles->SetLifetime(particles_lifetime);
+            spawn_particles->SetPos(position);
+            spawn_particles->Set_acc(vec3(0, 0, 0));
 
 
-        mat4t temp_rotation_mat;
-        temp_rotation_mat.translate(direction.x(), direction.y(), direction.z());    
-        int temp_ran;
-        float temp_rot;
-       
-        temp_ran = rand();
-        temp_rot =( (temp_ran/INT_MAX) *spread) - spread/2; 
-        temp_rotation_mat.rotateX(temp_rot);
+            mat4t temp_rotation_mat;
+            int temp_ran;
+            float temp_rot;
 
-        temp_ran = rand();
-        temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
-        temp_rotation_mat.rotateY(temp_rot);
+            temp_ran = rand();
+            temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
+            temp_rotation_mat.rotateX(temp_rot);
 
-        temp_ran = rand();
-        temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
-        temp_rotation_mat.rotateZ(temp_rot);
+            temp_ran = rand();
+            temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
+            temp_rotation_mat.rotateY(temp_rot);
 
-        spawn_particles->SetForce(vec3(temp_rotation_mat.w().x(), temp_rotation_mat.w().y(), temp_rotation_mat.w().z()));
+            temp_ran = rand();
+            temp_rot = ((temp_ran / INT_MAX) *spread) - spread / 2;
+            temp_rotation_mat.rotateZ(temp_rot);
 
-      }
-      else
-      return;
+            temp_rotation_mat.translate(direction.x(), direction.y(), direction.z());
+
+            spawn_particles->SetForce(vec3(temp_rotation_mat.w().x(), temp_rotation_mat.w().y(), temp_rotation_mat.w().z()));
+
+        }
+        else
+            return;
     }
-    
   };
   }
 

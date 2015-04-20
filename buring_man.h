@@ -11,7 +11,7 @@ namespace octet {
   class buring_man : public app {
     // scene for drawing box
     ref<visual_scene> app_scene;
-
+    particle_sys system;
     struct my_vertex {
       vec3p pos;
       vec3p nor;
@@ -90,6 +90,12 @@ namespace octet {
       camera_mat.rotateX(0);
 
       
+      system.Init(1,app_scene);
+
+      particle_emitter *em =new particle_emitter(vec3(),vec3(0,1,0),1,1,1,50);
+
+      system.AddEmitter(em);
+     
 
       
     }
@@ -102,6 +108,8 @@ namespace octet {
 
       // update matrices. assume 30 fps.
       app_scene->update(1.0f/30);
+      
+      system.Update(1.0f/30);
 
       // draw the scene
       app_scene->render((float)vx / vy);

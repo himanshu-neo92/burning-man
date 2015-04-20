@@ -43,6 +43,8 @@ namespace octet {
             vec3 diff = (pos_ - oldPos_)*friction_ + acc_*dt;
             oldPos_ = pos_;
             pos_ += diff;
+
+            printf("x:%f,y:%f,z%f \n",pos_.x(),pos_.y(),pos_.z());
             //decrease lifetime
             lifetime_-=dt;
         }

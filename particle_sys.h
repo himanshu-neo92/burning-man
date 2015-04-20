@@ -2,6 +2,10 @@
 #define PARTICLE_SYSTEM_H
 
 #include "../../octet.h"
+
+#include <random>
+#include <time.h>
+
 #include "Particle.h"
 #include "particle_emitter.h"
 
@@ -14,7 +18,7 @@ namespace octet {
     public:
         Particle* GetNewParticle()
         {
-            if (openPool_.size() > 1)
+            if (openPool_.size() >= 1)
             {
                 Particle* p = openPool_.back();
                 //flag is enabled
@@ -27,7 +31,7 @@ namespace octet {
         
         }
 
-        void Init(int mp,)
+        void Init(int mp,ref<visual_scene> scene)
         {
             maxParticles_=mp;
 
@@ -39,6 +43,7 @@ namespace octet {
                 particles_[i]=new Particle();
                 openPool_.push_back(particles_[i]);
             }
+            srand(time(NULL));
         }
 
         int AddEmitter(smtEmitter em)
@@ -93,7 +98,7 @@ namespace octet {
                 {
                     ReturnParticle(particles_[i]);
                 }
-                else
+                else if(particles_[i]->GetEnabledFlag())
                 {
                     particles_[i]->AddForce(gravity_+SumForces());
                     particles_[i]->Update(dt);
