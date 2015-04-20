@@ -1,91 +1,116 @@
 #ifndef PARTICLE_H_INCLUDED
 #define PARTICLE_H_INCLUDED
 
-#include"../../octet.h"
 
-class Particle
-{
-public:
-    //construct with mass, mass will be converted to inverse mass
-    Particle(float mass = 1.0f) :lifetime_(0), friction_(1)
+
+namespace octet {
+
+    class Particle :public resource
     {
-        if (mass != 0)
+    public:
+        //construct with mass, mass will be converted to inverse mass
+        Particle(float mass = 1.0f) :lifetime_(0), friction_(1)
         {
-            invMass_ = 1.0f / mass;
+            if (mass != 0)
+            {
+                invMass_ = 1.0f / mass;
+            }
+            else
+            {
+                invMass_ = 0;
+            }
         }
-        else
+        void SetMass(float mass)
         {
-            invMass_ = 0;
+            if (mass == 0)
+            {
+                invMass_ = 0;
+                return;
+            }
+            invMass_ = 1 / mass;
         }
-    }
-    void SetMass(float mass)
-    {
-        if (mass == 0)
+        void Update(float dt)
         {
-            invMass_ = 0;
-            return;
+            //check for infinite mass
+            if (invMass_ == 0)
+            {
+                return;
+            }
+            //add force to acceleration depending on mass
+            acc_ = force_*invMass_;
+            force_ = vec3(); //null the force
+
+            //calculate the difference between positions using veloicty + new acceleration
+            vec3 diff = (pos_ - oldPos_)*friction_ + acc_*dt;
+            oldPos_ = pos_;
+            pos_ += diff;
         }
-        invMass_ = 1 / mass;
-    }
-    void Update(float dt)
-    {
-        if(invMass_ == 0)
+        float GetInvMass()const
         {
-            return;
+            return invMass_;
         }
-        acc_=force_*invMass_;
-        force_=octet::vec3();
 
-        octet::vec3 diff = (pos_-oldPos_)*friction_+acc_*dt;
-        oldPos_=pos_;
-        pos_+=diff;
-    }
-    float GetInvMass()const
-    {return invMass_;}
+        void AddForce(const vec3& force)
+        {
+            force_ += force;
+        }
 
-    void AddForce(const octet::vec3& force)
-    {force_ += force;}
+        void SetForce(const vec3& force)
+        {
+            force_ = force;
+        }
 
-    void SetForce(const octet::vec3& force)
-    {force_=force;}
+        vec3 GetForce()const
+        {
+            return force_;
+        }
 
-    octet::vec3 GetForce()const
-    {return force_;}
+        void SetPos(const vec3& pos)
+        {
+            vec3 diff = pos - pos_;
+            pos_ += diff;
+            oldPos_ += diff;
+        }
+        vec3 GetPos()const
+        {
+            return pos_;
+        }
 
-    void SetPos(const octet::vec3& pos)
-    {
-        octet::vec3 diff = pos - pos_;
-        pos_ +=diff;
-        oldPos_ += diff;
-    }
-    octet::vec3 GetPos()const
-    {return pos_;}
+        float GetLifetime()const
+        {
+            return lifetime_;
+        }
 
-    float GetLifetime()const
-    {return lifetime_;}
+        void SetLifetime(float lifetime)
+        {
+            lifetime_ = lifetime;
+        }
 
-    void SetLifetime(float lifetime)
-    {lifetime_=lifetime;}
+        bool IsDead()const
+        {
+            return lifetime_ > 0;
+        }
 
-    bool IsDead()const
-    {return lifetime_ > 0;}
+        float GetFriction()const
+        {
+            return friction_;
+        }
 
-    float GetFriction()const
-    {return friction_;}
+        void SetFriction(float frict)
+        {
+            friction_ = frict;
+        }
 
-    void SetFriction(float frict)
-    {friction_=frict;}
-
-private:
-    octet::vec3 pos_;
-    octet::vec3 oldPos_;
-    octet::vec3 acc_;
+    private:
+        vec3 pos_;
+        vec3 oldPos_;
+        vec3 acc_;
 
 
-    octet::vec3 force_;
-    float invMass_;
-    float lifetime_;
-    float friction_;
-};
-
+        vec3 force_;
+        float invMass_;
+        float lifetime_;
+        float friction_;
+    };
+}
 #endif

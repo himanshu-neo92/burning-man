@@ -8,7 +8,8 @@
 //
 
 #include "../../octet.h"
-
+#include "particle_sys.h"
+#include "particle_emitter.h"
 #include "Particle.h"
 #include "buring_man.h"
 

@@ -1,3 +1,8 @@
+#ifndef PARTICLE_EMMITER_H
+#define PARTICLE_EMMITER_H
+
+
+
 namespace octet {
 
   class particle_emitter : public resource {
@@ -42,3 +47,5 @@ namespace octet {
     }
   };
   }
+
+#endif
