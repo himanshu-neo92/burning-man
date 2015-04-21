@@ -162,7 +162,7 @@ namespace octet {
                 int num=emitters_[i]->Update(dt);
                 if (num > 0)
                 {
-                    for (int i = 0; i < num; ++i)
+                    for (int j= 0; j < num; ++j)
                     {
                        emitters_[i]->Spawn_particle(GetNewParticle());
                     }
