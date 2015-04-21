@@ -3,6 +3,7 @@
 
 
 #include "../../octet.h"
+#include "particle_man.h"
 #include "Particle.h"
 
 namespace octet {
@@ -27,7 +28,7 @@ namespace octet {
 
         bool enabled;
 
-        
+        Particle_man* particle_manager;
     public:
 
       particle_emitter(vec3 _position, vec3 _direction = vec3(0, 0, 1), int _max_particles = 1, float _nu_particles_per_sec = 1, float _spread = 1, float _particles_lifetime = 0.1f, float _friction_particle = 1.0f, float _particle_mass = 1.0f, float _speed=1.0f)
@@ -43,14 +44,12 @@ namespace octet {
 
             particle_mass = _particle_mass;
             dt_accumalation = 0.0f;
-
-            enabled = true;
-
-            
+            enabled = true;     
+            particle_manager=nullptr;
         }
         ~particle_emitter()
         {
-
+          delete particle_manager;
         }
 
         vec3 Get_position() const
@@ -133,6 +132,14 @@ namespace octet {
         enabled = _enabled;
     }
 
+    void Set_particle_man(Particle_man *the_man)
+    {
+      particle_manager=the_man;
+    }
+    Particle_man * Get_particle_man()
+    {
+      return particle_manager;
+    }
     int Update(float dt)
     {
         dt_accumalation += dt;
@@ -142,6 +149,8 @@ namespace octet {
             dt_accumalation = 0;
             return num_particles_to_spawn;
         }
+        if (particle_manager!=nullptr)
+       { particle_manager->Update_particles();}
     }
 
     void Spawn_particle(Particle * spawn_particles)
@@ -176,7 +185,8 @@ namespace octet {
             temp_rotation_mat.translate(direction.x()*speed, direction.y()*speed, direction.z()*speed);
 
             spawn_particles->SetForce(vec3(temp_rotation_mat.w().x(), temp_rotation_mat.w().y(), temp_rotation_mat.w().z()));
-
+            if (particle_manager != nullptr)
+            {particle_manager->add_particle(spawn_particles);}
         }
         else
             return;
