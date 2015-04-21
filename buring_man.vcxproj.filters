@@ -444,5 +444,7 @@
     <None Include="..\..\resources\resources.inl">
       <Filter>resources</Filter>
     </None>
+    <None Include="Particle.vs" />
+    <None Include="Particle_solid.fs" />
   </ItemGroup>
 </Project>

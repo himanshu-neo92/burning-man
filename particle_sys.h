@@ -9,6 +9,7 @@
 #include "Particle.h"
 #include "particle_emitter.h"
 
+
 namespace octet {
     class particle_sys :public resource
     {
@@ -31,27 +32,91 @@ namespace octet {
         
         }
 
+        void AdvancedInit()
+        {
+            instanceMesh_ = new mesh();
+
+            instanceMesh_->allocate(sizeof(vec3p) * 4, 0);
+            instanceMesh_->set_params(sizeof(vec3p), 0, 4, GL_TRIANGLE_STRIP, NULL);
+            instanceMesh_->clear_attributes();
+
+            instanceMesh_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
+            ////instanceMesh_->add_attribute(octet::attribute_uv,2,GL_FLOAT,24);
+
+
+
+
+            const GLfloat vertData[] = {
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                -0.5f, 0.5f, 0.0f,
+                0.5f, 0.5f, 0.0f };
+
+            octet::gl_resource::wolock vt(instanceMesh_->get_vertices());
+            float* vtx = (float*)vt.u8();
+
+            memcpy(vtx, &vertData[0], sizeof(float) * 12);
+
+
+            const vec4 colorData[] = {
+                vec4(1.0f, 0, 0, 1.0),
+                vec4(0, 1.0f, 0, 1.0),
+                vec4(0, 0, 1.0f, 1.0),
+                vec4(1.0f, 1.0f, 1.0f, 1.0f)
+            };
+            bufferA = new gl_resource();
+
+
+            //setup the instance buffer
+            bufferA->allocate(GL_ARRAY_BUFFER, sizeof(vec4) * 4, GL_DYNAMIC_DRAW);
+            bufferA->assign(&colorData[0], 0, sizeof(vec4) * 4);
+            bufferA->bind();
+
+            //it is now bound and as such these commands work
+            glEnableVertexAttribArray(attribute_color);
+            glVertexAttribDivisor(attribute_color, 1);
+            glVertexAttribPointer(attribute_color, sizeof(vec4), GL_FLOAT_VEC4, FALSE, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, NULL);
+        
+        }
+
         void Init(int mp,ref<visual_scene> scene)
         {
             maxParticles_=mp;
 
             
             meshy_ = new mesh_box(vec3(1,1,1));
-            material* mat=new material(vec4(1,0,0,1));
+            //mat=new material(vec4(1,0,0,1));
 
             particles_.resize(maxParticles_);
             openPool_.reserve(maxParticles_);
             meshies_.reserve(maxParticles_);
+
+            
+          
+        
+            param_shader* sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
+            
+            mat=new material(vec4(1,0,0,1),sh);
+            
+            mat->add_uniform(NULL,atom_point,GL_FLOAT_VEC4,1,param::stage_fragment);
+            float col[4] = { 0, 1, 0, 1 };
+            mat->set_uniform(mat->get_param_uniform(atom_point),&col,sizeof(float)*4);
+
+           
+            
+            
             for (int i = 0; i < maxParticles_; ++i)
             {
                 particles_[i]=new Particle();
                 openPool_.push_back(particles_[i]);
-
                 scene_node* s=new scene_node();
                 scene->add_scene_node(s);
                 meshies_.push_back(new mesh_instance(s,meshy_,mat));
                scene->add_mesh_instance(meshies_.back());
             }
+
+
 
             srand(time(NULL));
         }
@@ -157,8 +222,12 @@ namespace octet {
       dynarray<smtPart> particles_;
       dynarray<smtEmitter> emitters_;
 
-      ref<mesh>  meshy_;
 
+      ref<mesh> instanceMesh_;
+
+      ref<gl_resource> bufferA;
+      ref<mesh>  meshy_;
+      ref<material> mat;
       dynarray<ref<mesh_instance>> meshies_;
 
       int maxParticles_;

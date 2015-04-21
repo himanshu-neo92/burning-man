@@ -94,7 +94,7 @@ namespace octet {
       app_scene->create_default_camera_and_lights();
       app_scene->get_camera_instance(0)->set_far_plane(10000);
       mat4t &camera_mat = app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
-      camera_mat.translate(0, 0, -100);
+      camera_mat.w()=vec4(0,0,-10,1);
 
 
       
