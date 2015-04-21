@@ -76,7 +76,7 @@ namespace octet {
     {
         return  nu_particles_per_sec;
     }
-    void Set__nu_particles_per_sec(float _nu_particles_per_sec)
+    void Set_nu_particles_per_sec(float _nu_particles_per_sec)
     {
         nu_particles_per_sec = _nu_particles_per_sec;
     }
@@ -115,6 +115,17 @@ namespace octet {
     {
         friction_particle = _friction_particle;
     }
+
+    float Get_mass_particle() const 
+    {
+      return particle_mass;
+    }
+    void Set_mass_particle(float mass)
+    {
+      particle_mass=mass;
+    }
+
+
     particle_sys* Get_sys_particle() const
     {
         return sys_particle;
@@ -140,6 +151,8 @@ namespace octet {
     {
       return particle_manager;
     }
+
+
     int Update(float dt)
     {
         dt_accumalation += dt;

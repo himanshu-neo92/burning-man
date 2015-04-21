@@ -4,6 +4,9 @@
 //
 // Modular Framework for OpenGLES2 rendering on multiple platforms.
 //
+
+#include "change_speed_by_distance_pm.h"
+
 namespace octet {
   /// Scene containing a box with octet.
   #define height_image 256
@@ -74,12 +77,18 @@ namespace octet {
         camera.translate(5, 0, 0);
       }
     }
+    Particle_man *temppart;
   public:
     /// this is called when we construct the class before everything is initialised.
     buring_man(int argc, char **argv) : app(argc, argv) {
     }
 
-    /// this is called once OpenGL is initialized
+    ~buring_man()
+    {
+      delete temppart;
+    }
+    
+    // this is called once OpenGL is initialized
     void app_init() {
       app_scene =  new visual_scene();
       app_scene->create_default_camera_and_lights();
@@ -91,10 +100,11 @@ namespace octet {
       
       system.Init(20,app_scene);
 
+      
       particle_emitter *em =new particle_emitter(vec3(),vec3(0,1,0),60,5,90,2);
-
-      system.AddEmitter(em);
-     
+      temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_direction(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_spread());
+      em->Set_particle_man(temppart);
+      system.AddEmitter(em); 
 
       
     }
