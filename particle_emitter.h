@@ -14,10 +14,8 @@ namespace octet {
 
 
         vec3 position;
-        vec3 direction;
         float nu_particles_per_sec;        
         int max_particles;
-        float spread;
         float particles_lifetime;
         float friction_particle;
         float particle_mass;
@@ -31,13 +29,13 @@ namespace octet {
         Particle_man* particle_manager;
     public:
 
-      particle_emitter(vec3 _position, vec3 _direction = vec3(0, 0, 1), int _max_particles = 1, float _nu_particles_per_sec = 1, float _spread = 1, float _particles_lifetime = 0.1f, float _friction_particle = 1.0f, float _particle_mass = 1.0f, float _speed=1.0f)
+      particle_emitter(vec3 _position, int _max_particles = 1, 
+      float _nu_particles_per_sec = 1, float _particles_lifetime = 0.1f,
+       float _friction_particle = 1.0f, float _particle_mass = 1.0f, float _speed=1.0f)
         {
             position = _position;
-            direction = _direction.normalize();
             nu_particles_per_sec = _nu_particles_per_sec;
             max_particles = _max_particles;
-            spread = _spread;
             particles_lifetime = _particles_lifetime;
             friction_particle = _friction_particle;
             speed=_speed;
@@ -62,16 +60,7 @@ namespace octet {
             position = _position;
         }
 
-        vec3 Get_direction() const
-        {
-            return direction;
-        }
-    
-    void Set_direction(vec3 _direction)
-    {
-        direction = _direction;
-    }
-
+        
     float Get_nu_particles_per_sec() const
     {
         return  nu_particles_per_sec;
@@ -88,15 +77,7 @@ namespace octet {
     {
         max_particles = _max_particles;
     }
-    float Get_spread() const
-    {
-        return spread;
-    }
-    void Set_spread(float _spread)
-    {
-        spread = _spread;
-    }
-
+    
     float Get_particles_lifetime() const
     {
         return particles_lifetime;
@@ -197,6 +178,17 @@ namespace octet {
           //printf("no more particles");
             return;
             }
+    }
+
+
+
+    virtual vec3 Get_direction() const
+    {
+      return vec3(0,0,0);
+    }
+    virtual float Get_spread() const 
+    {
+      return 0.0f;
     }
   };
   }

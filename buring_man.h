@@ -102,11 +102,11 @@ namespace octet {
       system.Init(120,app_scene);
 
       
-      particle_emitter *em =new particle_emitter_cone(vec3(),vec3(0,1,0),60,40,90,1.0f,2);
+      particle_emitter *em =new particle_emitter_cone(90,vec3(0,1,0),vec3(),60,40,1.0f,2.0f,1.0f,20.0f);
 
       system.Init(1000,app_scene);
      
-      temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_direction(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_spread());
+      temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_speed());
       em->Set_particle_man(temppart);
       system.AddEmitter(em); 
 
