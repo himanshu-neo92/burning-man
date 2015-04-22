@@ -8,8 +8,6 @@ uniform vec4 lighting[17];
 uniform int num_lights;
 uniform vec4 diffuse;
 
-uniform vec4 point;
-
 // inputs
 varying vec2 uv_;
 varying vec3 normal_;

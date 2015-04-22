@@ -35,68 +35,74 @@ namespace octet {
         void AdvancedInit()
         {
             meshy_ = new mesh();
-            int size=sizeof(float)*9;
+            int size=sizeof(float)*7;//9 3+4+2
             meshy_->allocate(size * 4, 0);
             meshy_->set_params(size, 0, 4, GL_TRIANGLE_STRIP, NULL);
             meshy_->clear_attributes();
 
             meshy_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
             meshy_->add_attribute(octet::attribute_color, 4, GL_FLOAT, 12,0,1);
-            meshy_->add_attribute(attribute_uv,2,GL_FLOAT,28,0,1);
+            //meshy_->add_attribute(attribute_uv,2,GL_FLOAT,28,0,1);
             
             meshy_->set_num_instances(4);
-            const vec4 colorData[] = {
-                vec4(1.0f, 0, 0, 1.0),
-                vec4(0, 1.0f, 0, 1.0),
-                vec4(0, 0, 1.0f, 1.0),
-                vec4(1.0f, 1.0f, 1.0f, 1.0f)
-            };
-
-
+            
 
             const GLfloat vertData[] = {
                 -0.5f, -0.5f, 0.0f,
                 0.0f, 0, 1.0f, 1.0f,
-                0.0f,0.0f,
+               // 0.0f,0.0f,
 
                 0.5f, -0.5f, 0.0f,
                 0, 1.0f, 0, 1.0f,
-                1.0f,0.0f,
+                //1.0f,0.0f,
 
                 -0.5f, 0.5f, 0.0f,
                 0, 0, 1.0f, 1.0f,
-                2.0f,0.0f,
+                //2.0f,0.0f,
 
                 0.5f, 0.5f, 0.0f,
                 1.0f, 1.0f, 0.0f, 1.0f,
-                3.0f,0.0f,
+                //3.0f,0.0f,
             };
 
-            octet::gl_resource::wolock vt(meshy_->get_vertices());
-            float* vtx = (float*)vt.u8();
+            { //scope destroy the lock
+                octet::gl_resource::wolock vt(meshy_->get_vertices());
+                float* vtx = (float*)vt.u8();
 
-            memcpy(vtx, &vertData[0], size*4);
+                memcpy(vtx, &vertData[0], size * 4);
+            }
 
+            const float uvData[] = {
+                0.0f, 0,
+                1.0f, 0,
+                2.0f, 0,
+                3.0f, 0,
+            };
+            
+            bufferA = new gl_resource();
 
             
-            //bufferA = new gl_resource();
-
-          /*  int loc = glGetAttribLocation(sh->get_program(), "data");
+            int loc = glGetAttribLocation(sh->get_program(), "uv");
             //setup the instance buffer
-            bufferA->allocate(GL_ARRAY_BUFFER, sizeof(vec4) * 4, GL_DYNAMIC_DRAW);
-            bufferA->assign(&colorData[0], 0, sizeof(vec4) * 4);
+            
             bufferA->bind();
+            
+            bufferA->allocate(GL_ARRAY_BUFFER, sizeof(float)*2 * 4, GL_DYNAMIC_DRAW);
+            bufferA->assign(&uvData[0], 0, sizeof(float)*2 * 4);
+            
+           
             //it is now bound and as such these commands work
+            glVertexAttribPointer(loc, 2, GL_FLOAT, FALSE, 0, NULL);
+            
             glEnableVertexAttribArray(loc);
+            
             glVertexAttribDivisor(loc, 1);
-            glVertexAttribPointer(loc, sizeof(vec4), GL_FLOAT_VEC4, FALSE, 0, 0);
-            glBindBuffer(GL_ARRAY_BUFFER, NULL);
-        */
+            
+   
         }
 
         void Init(int mp,ref<visual_scene> scene)
         {
-            
             maxParticles_=mp;
 
             
@@ -109,15 +115,11 @@ namespace octet {
             meshies_.reserve(maxParticles_);
 
             
-          AdvancedInit();
         
            sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
             
             mat=new material(vec4(1,0,0,1),sh);
-           /* mat->add_uniform(NULL,atom_point,GL_FLOAT_VEC4,1,param::stage_fragment);
-            float col[4] = { 0.0f, 1.0f, 0.0f, 1.0f};
-            mat->set_uniform(mat->get_param_uniform(atom_point),&col,sizeof(float)*4);*/
-            //AdvancedInit();
+            AdvancedInit();
             
             for (int i = 0; i < maxParticles_; ++i)
             {
@@ -160,14 +162,11 @@ namespace octet {
             {
                 if (particles_[i]->GetEnabledFlag())
                 {
-
-                  
-
                     meshies_[i]->get_node()->access_nodeToParent().w() = particles_[i]->GetPos().xyz1();
                 }
-
-
             }
+
+            //gl resource update
         }
 
         void Update(float dt)
