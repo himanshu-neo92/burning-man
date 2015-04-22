@@ -47,7 +47,7 @@ namespace octet {
             enabled = true;     
             particle_manager=nullptr;
         }
-        ~particle_emitter()
+       virtual ~particle_emitter()
         {
           delete particle_manager;
         }
@@ -101,12 +101,19 @@ namespace octet {
     {
         return particles_lifetime;
     }
-
     void Set_particles_lifetime(float _particles_lifetime)
     {
         particles_lifetime = _particles_lifetime;
     }
 
+    float Get_speed() const
+    {
+      return speed;
+    }
+    void Set_speed(float _speed)
+    {
+      speed= _speed;
+    }
     float Get_friction_particle() const
     {
         return friction_particle;
@@ -155,17 +162,20 @@ namespace octet {
 
     int Update(float dt)
     {
+      if (particle_manager != nullptr)
+      {
+        particle_manager->Update_particles();
+      }
         dt_accumalation += dt;
         float num_particles_to_spawn = floorf(nu_particles_per_sec*dt_accumalation);
         if (num_particles_to_spawn >= 1)
         {         
             dt_accumalation = 0;
             return num_particles_to_spawn;
-        }
-        if (particle_manager!=nullptr)
-       { particle_manager->Update_particles();}
+        }        
     }
 
+    virtual void create_shape(Particle *)=0;
     void Spawn_particle(Particle * spawn_particles)
     {
         if (spawn_particles != nullptr)
@@ -176,33 +186,16 @@ namespace octet {
             spawn_particles->SetPos(position);
             spawn_particles->Set_acc(vec3(0, 0, 0));
 
-
-            mat4t temp_rotation_mat;
-            int temp_ran;
-            float temp_rot;
-
-            temp_ran = rand();
-            float timesNum=((((float)temp_ran/(float)RAND_MAX)*2)-1);
-
-            temp_rot = ((((float)temp_ran / (float)RAND_MAX) *2)-1) * (spread / 2);
-            temp_rotation_mat.rotateX(temp_rot);
-
-            temp_ran = rand();
-            temp_rot = ((((float)temp_ran / (float)RAND_MAX) *2)-1) * (spread / 2);
-            temp_rotation_mat.rotateY(temp_rot);
-
-            temp_ran = rand();
-            temp_rot = ((((float)temp_ran / (float)RAND_MAX) *2)-1) * (spread /2);
-            temp_rotation_mat.rotateZ(temp_rot);
-
-            temp_rotation_mat.translate(direction.x()*speed, direction.y()*speed, direction.z()*speed);
-
-            spawn_particles->SetForce(vec3(temp_rotation_mat.w().x(), temp_rotation_mat.w().y(), temp_rotation_mat.w().z()));
+            create_shape(spawn_particles);
+            
             if (particle_manager != nullptr)
             {particle_manager->add_particle(spawn_particles);}
         }
         else
+        {
+          //printf("no more particles");
             return;
+            }
     }
   };
   }

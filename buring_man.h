@@ -6,11 +6,11 @@
 //
 
 #include "change_speed_by_distance_pm.h"
+#include "particle_emitter_cone.h"
+
 
 namespace octet {
   /// Scene containing a box with octet.
-  #define height_image 256
-  #define width_image 256
   class buring_man : public app {
     // scene for drawing box
     ref<visual_scene> app_scene;
@@ -94,14 +94,14 @@ namespace octet {
       app_scene->create_default_camera_and_lights();
       app_scene->get_camera_instance(0)->set_far_plane(10000);
       mat4t &camera_mat = app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
-      camera_mat.w()=vec4(0,0,-10,1);
+      camera_mat.w()=vec4(0,0,20,1);
 
 
       
-      system.Init(20,app_scene);
+      system.Init(120,app_scene);
 
       
-      particle_emitter *em =new particle_emitter(vec3(),vec3(0,1,0),60,5,90,2);
+      particle_emitter *em =new particle_emitter_cone(vec3(),vec3(0,1,0),60,40,90,1.0f,2);
       temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_direction(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_spread());
       em->Set_particle_man(temppart);
       system.AddEmitter(em); 
@@ -124,7 +124,7 @@ namespace octet {
       // draw the scene
       app_scene->render((float)vx / vy);
       mat4t &cam=app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
-      mouse_control(cam);
+     // mouse_control(cam);
       key_presses(cam);
     }
   };
