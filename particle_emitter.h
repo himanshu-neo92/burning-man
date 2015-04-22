@@ -155,6 +155,10 @@ namespace octet {
 
     int Update(float dt)
     {
+        if (particle_manager != nullptr)
+        {
+            particle_manager->Update_particles();
+        }
         dt_accumalation += dt;
         float num_particles_to_spawn = floorf(nu_particles_per_sec*dt_accumalation);
         if (num_particles_to_spawn >= 1)
@@ -162,8 +166,7 @@ namespace octet {
             dt_accumalation = 0;
             return num_particles_to_spawn;
         }
-        if (particle_manager!=nullptr)
-       { particle_manager->Update_particles();}
+        
     }
 
     void Spawn_particle(Particle * spawn_particles)
