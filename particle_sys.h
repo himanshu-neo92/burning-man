@@ -34,50 +34,71 @@ namespace octet {
 
         void AdvancedInit()
         {
-            instanceMesh_ = new mesh();
+            meshy_ = new mesh();
+            int size=sizeof(float)*7;//9 3+4+2
+            meshy_->allocate(size * 4, 0);
+            meshy_->set_params(size, 0, 4, GL_TRIANGLE_STRIP, NULL);
+            meshy_->clear_attributes();
 
-            instanceMesh_->allocate(sizeof(vec3p) * 4, 0);
-            instanceMesh_->set_params(sizeof(vec3p), 0, 4, GL_TRIANGLE_STRIP, NULL);
-            instanceMesh_->clear_attributes();
-
-            instanceMesh_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
-            ////instanceMesh_->add_attribute(octet::attribute_uv,2,GL_FLOAT,24);
-
-
-
+            meshy_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
+            meshy_->add_attribute(octet::attribute_color, 4, GL_FLOAT, 12,0,1);
+            //meshy_->add_attribute(attribute_uv,2,GL_FLOAT,28,0,1);
+            
+            meshy_->set_num_instances(4);
+            
 
             const GLfloat vertData[] = {
                 -0.5f, -0.5f, 0.0f,
+                0.0f, 0, 1.0f, 1.0f,
+               // 0.0f,0.0f,
+
                 0.5f, -0.5f, 0.0f,
+                0, 1.0f, 0, 1.0f,
+                //1.0f,0.0f,
+
                 -0.5f, 0.5f, 0.0f,
-                0.5f, 0.5f, 0.0f };
+                0, 0, 1.0f, 1.0f,
+                //2.0f,0.0f,
 
-            octet::gl_resource::wolock vt(instanceMesh_->get_vertices());
-            float* vtx = (float*)vt.u8();
-
-            memcpy(vtx, &vertData[0], sizeof(float) * 12);
-
-
-            const vec4 colorData[] = {
-                vec4(1.0f, 0, 0, 1.0),
-                vec4(0, 1.0f, 0, 1.0),
-                vec4(0, 0, 1.0f, 1.0),
-                vec4(1.0f, 1.0f, 1.0f, 1.0f)
+                0.5f, 0.5f, 0.0f,
+                1.0f, 1.0f, 0.0f, 1.0f,
+                //3.0f,0.0f,
             };
+
+            { //scope destroy the lock
+                octet::gl_resource::wolock vt(meshy_->get_vertices());
+                float* vtx = (float*)vt.u8();
+
+                memcpy(vtx, &vertData[0], size * 4);
+            }
+
+            const float uvData[] = {
+                0.0f, 0,
+                1.0f, 0,
+                2.0f, 0,
+                3.0f, 0,
+            };
+            
             bufferA = new gl_resource();
 
-
+            
+            int loc = glGetAttribLocation(sh->get_program(), "uv");
             //setup the instance buffer
-            bufferA->allocate(GL_ARRAY_BUFFER, sizeof(vec4) * 4, GL_DYNAMIC_DRAW);
-            bufferA->assign(&colorData[0], 0, sizeof(vec4) * 4);
+            
             bufferA->bind();
-
+            
+            bufferA->allocate(GL_ARRAY_BUFFER, sizeof(float)*2 * 4, GL_DYNAMIC_DRAW);
+            bufferA->assign(&uvData[0], 0, sizeof(float)*2 * 4);
+            
+           
             //it is now bound and as such these commands work
-            glEnableVertexAttribArray(attribute_color);
-            glVertexAttribDivisor(attribute_color, 1);
-            glVertexAttribPointer(attribute_color, sizeof(vec4), GL_FLOAT_VEC4, FALSE, 0, 0);
-            glBindBuffer(GL_ARRAY_BUFFER, NULL);
-        
+            glVertexAttribPointer(loc, 2, GL_FLOAT, FALSE, 0, NULL);
+            
+            glEnableVertexAttribArray(loc);
+            
+            glVertexAttribDivisor(loc, 1);
+            
+   
         }
 
         void Init(int mp,ref<visual_scene> scene)
@@ -85,26 +106,20 @@ namespace octet {
             maxParticles_=mp;
 
             
-            meshy_ = new mesh_box(vec3(1,1,1));
+            //meshy_ = new mesh_box(vec3(1,1,1));
             //mat=new material(vec4(1,0,0,1));
+            //meshy_->add_attribute(attribute_color,4,GL_FLOAT,32,0,1);
 
             particles_.resize(maxParticles_);
             openPool_.reserve(maxParticles_);
             meshies_.reserve(maxParticles_);
 
             
-          
         
-            param_shader* sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
+           sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
             
             mat=new material(vec4(1,0,0,1),sh);
-            
-            mat->add_uniform(NULL,atom_point,GL_FLOAT_VEC4,1,param::stage_fragment);
-            float col[4] = { 0, 1, 0, 1 };
-            mat->set_uniform(mat->get_param_uniform(atom_point),&col,sizeof(float)*4);
-
-           
-            
+            AdvancedInit();
             
             for (int i = 0; i < maxParticles_; ++i)
             {
@@ -149,9 +164,9 @@ namespace octet {
                 {
                     meshies_[i]->get_node()->access_nodeToParent().w() = particles_[i]->GetPos().xyz1();
                 }
-
-
             }
+
+            //gl resource update
         }
 
         void Update(float dt)
@@ -182,7 +197,7 @@ namespace octet {
                     particles_[i]->Update(dt);
                 }
             }
-            printf("%d",openPool_.size());
+            printf("%d\n",openPool_.size());
         }
 
         void SetGravity(const vec3& v)
@@ -228,6 +243,7 @@ namespace octet {
       ref<gl_resource> bufferA;
       ref<mesh>  meshy_;
       ref<material> mat;
+      param_shader* sh;
       dynarray<ref<mesh_instance>> meshies_;
 
       int maxParticles_;

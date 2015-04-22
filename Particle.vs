@@ -26,7 +26,8 @@ varying vec3 model_pos_;
 varying vec3 camera_pos_;
 
 void main() {
-  gl_Position = modelToProjection * pos;
+  gl_Position = modelToProjection * (pos+vec4(uv.xy,0,0));
+ // gl_Position = modelToProjection * pos;
   vec3 tnormal = (modelToCamera * vec4(normal, 0.0)).xyz;
   vec3 tpos = (modelToCamera * pos).xyz;
   normal_ = tnormal;
