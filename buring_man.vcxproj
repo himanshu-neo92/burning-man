@@ -228,6 +228,7 @@
     <None Include="..\..\resources\resources.inl" />
     <None Include="Particle.vs" />
     <None Include="Particle_solid.fs" />
+    <None Include="Particle_textured.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

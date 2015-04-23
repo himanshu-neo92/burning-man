@@ -450,5 +450,6 @@
     </None>
     <None Include="Particle.vs" />
     <None Include="Particle_solid.fs" />
+    <None Include="Particle_textured.fs" />
   </ItemGroup>
 </Project>
