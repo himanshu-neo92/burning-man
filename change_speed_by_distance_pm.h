@@ -7,7 +7,7 @@ namespace octet {
   class change_speed_by_distance_pm :public Particle_man
   {
   public :
-    change_speed_by_distance_pm(vec3 pos, vec3 dir, float lifetime, float mass, float speed) : Particle_man(pos,  dir,  lifetime,  mass,  speed)
+    change_speed_by_distance_pm(vec3 pos, float lifetime, float mass, float speed) : Particle_man(pos,  lifetime,  mass,  speed)
     {
       
     }
