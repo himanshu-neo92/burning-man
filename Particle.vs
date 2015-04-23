@@ -14,8 +14,8 @@ attribute vec4 pos;
 attribute vec2 uv;
 attribute vec3 normal;
 attribute vec4 color;
-
-
+attribute vec3 particlePos;
+attribute vec4 particleColor;
 
 
 // outputs
@@ -26,13 +26,13 @@ varying vec3 model_pos_;
 varying vec3 camera_pos_;
 
 void main() {
-  gl_Position = modelToProjection * (pos+vec4(uv.xy,0,0));
- // gl_Position = modelToProjection * pos;
+  gl_Position = modelToProjection * (pos+vec4(particlePos.xyz,0));
+  //gl_Position = modelToProjection * pos;
   vec3 tnormal = (modelToCamera * vec4(normal, 0.0)).xyz;
   vec3 tpos = (modelToCamera * pos).xyz;
   normal_ = tnormal;
   uv_ = uv;
-  color_ = color;
+  color_ = particleColor;
   camera_pos_ = tpos;
   model_pos_ = pos.xyz;
 }

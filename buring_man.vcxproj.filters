@@ -436,6 +436,10 @@
     <ClInclude Include="particle_sys.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Particle_man.h" />
+    <ClInclude Include="change_speed_by_distance_pm.h" />
+    <ClInclude Include="particle_emitter_cone.h" />
+    <ClInclude Include="particle_emitter_sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

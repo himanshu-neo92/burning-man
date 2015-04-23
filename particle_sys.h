@@ -32,37 +32,46 @@ namespace octet {
         
         }
 
-        void AdvancedInit()
+
+
+        void Init(int mp,ref<visual_scene> scene)
         {
+            maxParticles_=mp;
+
+            
+          
+            //mat=new material(vec4(1,0,0,1));
+            
+            particlePosBuffer_=new gl_resource();
+            particleColorBuffer_=new gl_resource();
+
+            particlePosBuffer_->bind();
+            //VEC3 for position
+            particlePosBuffer_->allocate(GL_ARRAY_BUFFER,maxParticles_*sizeof(float)*3,GL_DYNAMIC_DRAW);
+            particleColorBuffer_->bind();
+            //VEC4 for color
+            particleColorBuffer_->allocate(GL_ARRAY_BUFFER, maxParticles_*sizeof(float)*4,GL_DYNAMIC_DRAW);
+
+            particles_.resize(maxParticles_);
+            openPool_.reserve(maxParticles_);
+
+
+            //init mesh
             meshy_ = new mesh();
-            int size=sizeof(float)*7;//9 3+4+2
+            int size = sizeof(float) * 7;//9 3+4+2
             meshy_->allocate(size * 4, 0);
             meshy_->set_params(size, 0, 4, GL_TRIANGLE_STRIP, NULL);
             meshy_->clear_attributes();
-
             meshy_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
-            meshy_->add_attribute(octet::attribute_color, 4, GL_FLOAT, 12,0,1);
-            //meshy_->add_attribute(attribute_uv,2,GL_FLOAT,28,0,1);
-            
+
             meshy_->set_num_instances(4);
-            
+
 
             const GLfloat vertData[] = {
                 -0.5f, -0.5f, 0.0f,
-                0.0f, 0, 1.0f, 1.0f,
-               // 0.0f,0.0f,
-
                 0.5f, -0.5f, 0.0f,
-                0, 1.0f, 0, 1.0f,
-                //1.0f,0.0f,
-
                 -0.5f, 0.5f, 0.0f,
-                0, 0, 1.0f, 1.0f,
-                //2.0f,0.0f,
-
                 0.5f, 0.5f, 0.0f,
-                1.0f, 1.0f, 0.0f, 1.0f,
-                //3.0f,0.0f,
             };
 
             { //scope destroy the lock
@@ -71,68 +80,24 @@ namespace octet {
 
                 memcpy(vtx, &vertData[0], size * 4);
             }
-
-            const float uvData[] = {
-                0.0f, 0,
-                1.0f, 0,
-                2.0f, 0,
-                3.0f, 0,
-            };
+            //end material
             
-            bufferA = new gl_resource();
-
-            
-            int loc = glGetAttribLocation(sh->get_program(), "uv");
-            //setup the instance buffer
-            
-            bufferA->bind();
-            
-            bufferA->allocate(GL_ARRAY_BUFFER, sizeof(float)*2 * 4, GL_DYNAMIC_DRAW);
-            bufferA->assign(&uvData[0], 0, sizeof(float)*2 * 4);
-            
-           
-            //it is now bound and as such these commands work
-            glVertexAttribPointer(loc, 2, GL_FLOAT, FALSE, 0, NULL);
-            
-            glEnableVertexAttribArray(loc);
-            
-            glVertexAttribDivisor(loc, 1);
-            
-   
-        }
-
-        void Init(int mp,ref<visual_scene> scene)
-        {
-            maxParticles_=mp;
-
-            
-            //meshy_ = new mesh_box(vec3(1,1,1));
-            //mat=new material(vec4(1,0,0,1));
-            //meshy_->add_attribute(attribute_color,4,GL_FLOAT,32,0,1);
-
-            particles_.resize(maxParticles_);
-            openPool_.reserve(maxParticles_);
-            meshies_.reserve(maxParticles_);
-
-            
-        
+            //create shader
            sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
             
             mat=new material(vec4(1,0,0,1),sh);
-            AdvancedInit();
+            //end shader
+
+            scene_node* sc = new scene_node();
+            scene->add_scene_node(sc);
+
+            meshInst_ = new mesh_instance(sc,meshy_,mat);
             
             for (int i = 0; i < maxParticles_; ++i)
             {
                 particles_[i]=new Particle();
                 openPool_.push_back(particles_[i]);
-                scene_node* s=new scene_node();
-                scene->add_scene_node(s);
-                meshies_.push_back(new mesh_instance(s,meshy_,mat));
-               scene->add_mesh_instance(meshies_.back());
             }
-
-
-
             srand(time(NULL));
         }
 
@@ -156,14 +121,39 @@ namespace octet {
             return nullptr;//no emmiter at index
         }
 
+
+
+        //bufferA = new gl_resource();
+
+        //
+        //int loc = glGetAttribLocation(sh->get_program(), "uv");
+        ////setup the instance buffer
+        //
+        //bufferA->bind();
+        //
+        //bufferA->allocate(GL_ARRAY_BUFFER, sizeof(float)*2 * 4, GL_DYNAMIC_DRAW);
+        //bufferA->assign(&uvData[0], 0, sizeof(float)*2 * 4);
+        //
+
+        ////it is now bound and as such these commands work
+        //glVertexAttribPointer(loc, 2, GL_FLOAT, FALSE, 0, NULL);
+        //
+        //glEnableVertexAttribArray(loc);
+        //
+        //glVertexAttribDivisor(loc, 1);
         void Draw()
         {
+            int posLoc=glGetAttribLocation(sh->get_program(),"particlePos");
+            assert(posLoc!=-1);
+            int colLoc=glGetAttribLocation(sh->get_program(),"particleColor");
+            assert(posLoc!=-1);
+            
+
+           gl_resource::wolock at(particlePosBuffer_);
+
             for (int i = 0; i < particles_.size(); ++i)
             {
-                if (particles_[i]->GetEnabledFlag())
-                {
-                    meshies_[i]->get_node()->access_nodeToParent().w() = particles_[i]->GetPos().xyz1();
-                }
+                
             }
 
             //gl resource update
@@ -240,11 +230,14 @@ namespace octet {
 
       ref<mesh> instanceMesh_;
 
-      ref<gl_resource> bufferA;
+      ref<gl_resource> particlePosBuffer_;
+      ref<gl_resource> particleColorBuffer_;
       ref<mesh>  meshy_;
+      ref<mesh_instance> meshInst_;
+
       ref<material> mat;
       param_shader* sh;
-      dynarray<ref<mesh_instance>> meshies_;
+      
 
       int maxParticles_;
 
