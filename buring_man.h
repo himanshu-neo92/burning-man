@@ -102,7 +102,7 @@ namespace octet {
       system.Init(120,app_scene);
 
       
-      particle_emitter *em =new particle_emitter_cone(90,vec3(0,1,0),vec3(),60,40,1.0f,2.0f,1.0f,20.0f);
+      particle_emitter *em =new particle_emitter_cone(45,vec3(0,1,0),vec3(),60,40,1.0f,2.0f,1.0f,1.0f);
 
       system.Init(1000,app_scene);
      
