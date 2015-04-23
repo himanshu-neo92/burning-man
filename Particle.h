@@ -113,6 +113,16 @@ namespace octet {
             return friction_;
         }
 
+        vec4 GetColor()const
+        {
+            return color_;
+        }
+
+        void SetColor(const vec4& v)
+        {
+            color_=v;
+        }
+
         void SetFriction(float frict)
         {
             friction_ = frict;
@@ -128,7 +138,7 @@ namespace octet {
         vec3 pos_;
         vec3 oldPos_;
         vec3 acc_;
-
+        vec4 color_;
         
 
 
