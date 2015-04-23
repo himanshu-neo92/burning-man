@@ -7,7 +7,7 @@
 
 #include "change_speed_by_distance_pm.h"
 #include "particle_emitter_cone.h"
-
+#include "particle_emitter_sphere.h"
 
 namespace octet {
   /// Scene containing a box with octet.
