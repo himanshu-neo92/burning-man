@@ -11,11 +11,19 @@
 
 
 namespace octet {
+
+  struct collision_sphere
+  {
+    float _rad;
+    vec3 _center;
+    
+  };
     class particle_sys :public resource
     {
     public:
         typedef ref<Particle> smtPart;
         typedef ref<particle_emitter> smtEmitter;
+        typedef ref<collision_sphere> smtcollider;
     public:
         Particle* GetNewParticle()
         {
@@ -156,6 +164,25 @@ namespace octet {
             return nullptr;//no emmiter at index
         }
 
+        int AddCollider(smtcollider cs)
+        {
+          if (cs)
+          {
+            collider_.push_back(cs);
+            return collider_.size()-1;
+          }
+        }
+
+        smtcollider GetCollider(unsigned index)
+        {
+          if (index < collider_.size())
+          {
+            return collider_[index];
+          }
+          return nullptr;
+        }
+
+
         void Draw()
         {
             for (int i = 0; i < particles_.size(); ++i)
@@ -193,8 +220,10 @@ namespace octet {
                 }
                 else if(particles_[i]->GetEnabledFlag())
                 {
+                    
                     particles_[i]->AddForce(gravity_+SumForces());
                     particles_[i]->Update(dt);
+                    calculate_coll_test(particles_[i]);
                 }
             }
             printf("%d\n",openPool_.size());
@@ -231,12 +260,36 @@ namespace octet {
             return sum;
         }
 
+        void calculate_coll_test(smtPart particle)
+        {
+          for (int i=0;i<collider_.size();i++)
+          {
+            if (squared(particle->GetPos().x() - collider_[i]->_center.x()) + squared(particle->GetPos().y() - collider_[i]->_center.y()) + squared(particle->GetPos().z() - collider_[i]->_center.z()) <= squared(squared(0.1f + collider_[i]->_rad)))
+            {
+              
+              vec3 current_vel = particle->Get_vel();
+              vec3 nortosurface = vec3(particle->GetPos().x() - collider_[i]->_center.x(), particle->GetPos().y() - collider_[i]->_center.y(), particle->GetPos().z() - collider_[i]->_center.z());
+              vec3 force_nor = nortosurface * nortosurface.dot(current_vel);
+              vec3 force_par = current_vel - force_nor;
+
+              force_nor *= -1;
+
+              force_nor *= particle->GetFriction();
+              force_par *= particle->GetRestitution();
+
+
+              vec3 force_to_add = force_nor+force_par;
+              particle->SetPos(particle->GetPos());
+              particle->AddForce(force_to_add);
+            }
+          }
+        }
     private:
       dynarray<Particle*> openPool_;
 
       dynarray<smtPart> particles_;
       dynarray<smtEmitter> emitters_;
-
+      dynarray<smtcollider> collider_;
 
       ref<mesh> instanceMesh_;
 
