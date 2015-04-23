@@ -98,7 +98,7 @@ namespace octet {
 
 
 
-      system.Init(120,app_scene);
+      system.Init(120,app_scene,"assets/andyt.gif");
 
       
 

@@ -5,7 +5,6 @@
 
 
 // matrices
-uniform mat4 modelToProjection;
 uniform mat4 modelToCamera;
 
 uniform mat4 cameraToProjection;
@@ -43,7 +42,6 @@ void main() {
 	mtpBillboard[2][2] = 1.0; 
 
   gl_Position = cameraToProjection * (mtpBillboard*(pos+vec4(particlePos.xyz,0)));
-  //gl_Position = modelToProjection * pos;
   vec3 tnormal = (modelToCamera * vec4(normal, 0.0)).xyz;
   vec3 tpos = (modelToCamera * pos).xyz;
   normal_ = tnormal;

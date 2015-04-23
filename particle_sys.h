@@ -34,41 +34,41 @@ namespace octet {
 
 
 
-        void Init(int mp,ref<visual_scene> scene)
+        void Init(int mp, ref<visual_scene> scene, string texture = "")
         {
-            maxParticles_=mp;
+            maxParticles_ = mp;
 
-            
-          
-            //mat=new material(vec4(1,0,0,1));
-            
-            particlePosBuffer_=new gl_resource();
-            particleColorBuffer_=new gl_resource();
+            particlePosBuffer_ = new gl_resource();
+            particleColorBuffer_ = new gl_resource();
 
             particlePosBuffer_->bind();
             //VEC3 for position
-            particlePosBuffer_->allocate(GL_ARRAY_BUFFER,maxParticles_*sizeof(float)*3,GL_DYNAMIC_DRAW);
+            particlePosBuffer_->allocate(GL_ARRAY_BUFFER, maxParticles_*sizeof(float) * 3, GL_DYNAMIC_DRAW);
             particleColorBuffer_->bind();
             //VEC4 for color
-            particleColorBuffer_->allocate(GL_ARRAY_BUFFER, maxParticles_*sizeof(float)*4,GL_DYNAMIC_DRAW);
-            glBindBuffer(GL_ARRAY_BUFFER,0);
+            particleColorBuffer_->allocate(GL_ARRAY_BUFFER, maxParticles_*sizeof(float) * 4, GL_DYNAMIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             particles_.resize(maxParticles_);
             openPool_.reserve(maxParticles_);
 
 
             //init mesh
             meshy_ = new mesh();
-            int size = sizeof(float) * 3;
+            int size = sizeof(float) * 5;
             meshy_->allocate(size * 4, 0);
             meshy_->set_params(size, 0, 4, GL_TRIANGLE_STRIP, NULL);
             meshy_->clear_attributes();
             meshy_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
-
+            meshy_->add_attribute(octet::attribute_uv, 2, GL_FLOAT, 12);
             const GLfloat vertData[] = {
                 -0.5f, -0.5f, 0.0f,
+                0.0f, 0.0f,
                 0.5f, -0.5f, 0.0f,
+                1.0f, 0.0f,
                 -0.5f, 0.5f, 0.0f,
+                0.0f, 1.0f,
                 0.5f, 0.5f, 0.0f,
+                1.0f, 1.0f
             };
 
             { //scope destroy the lock
@@ -78,12 +78,23 @@ namespace octet {
                 memcpy(vtx, &vertData[0], size * 4);
             }
             //end mesh
+
+
+            if (texture.size() > 0)
+            {
+                //create shader
+                sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_textured.fs");
+                mat = new material(new image(texture), NULL, sh);
+            }
+            else
+            {
+                sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
+                mat = new material(vec4(1,1,1,1), sh);
+            }
             
-            //create shader
-           sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
+            mat->add_uniform(NULL, atom_cameraToProjection, GL_FLOAT_MAT4, 1, param::stage_vertex);
+        
             
-            mat=new material(vec4(1,0,0,1),sh);
-            mat->add_uniform(NULL,atom_cameraToProjection,GL_FLOAT_MAT4,1,param::stage_fragment);
             //end shader
 
             scene_node* sc = new scene_node();
@@ -95,6 +106,10 @@ namespace octet {
             for (int i = 0; i < maxParticles_; ++i)
             {
                 particles_[i]=new Particle();
+                if (texture.size())
+                {
+                    particles_[i]->SetColor(vec4(0,0,0,0));
+                }
                 openPool_.push_back(particles_[i]);
             }
             srand(time(NULL));
@@ -107,6 +122,7 @@ namespace octet {
                 emitters_.push_back(em);
                 return emitters_.size()-1;//index of the emitter is the new size -1
             }
+            return 0;
         }
 
 

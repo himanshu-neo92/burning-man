@@ -8,7 +8,7 @@ namespace octet {
     {
     public:
         //construct with mass, mass will be converted to inverse mass
-        Particle(float mass = 1.0f) :lifetime_(0), friction_(1), enabledFlag_(false), color_(0,1,0,1)
+        Particle(float mass = 1.0f) :lifetime_(0), friction_(1), enabledFlag_(false), color_(0.1,0.1,0.1,1)
         {
             if (mass != 0)
             {
