@@ -31,9 +31,6 @@ namespace octet {
             return NULL;
         
         }
-
-
-
         void Init(int mp, ref<visual_scene> scene, string texture = "")
         {
             maxParticles_ = mp;
@@ -139,7 +136,6 @@ namespace octet {
 
         void Draw(camera_instance* cam)
         {
-
             int posLoc=glGetAttribLocation(sh->get_program(),"particlePos");
             assert(posLoc!=-1);
 

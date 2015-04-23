@@ -11,10 +11,10 @@ namespace octet {
   
   public : 
     particle_emitter_sphere(vec3 _position,
-    int _max_particles = 1, float _nu_particles_per_sec = 1,
+     float _nu_particles_per_sec = 1,
     float _particles_lifetime = 0.1f, float _friction_particle = 1.0f,
      float _particle_mass = 1.0f, float _speed = 1.0f) : 
-     particle_emitter(_position, _max_particles, _nu_particles_per_sec, _particles_lifetime, _friction_particle, _particle_mass, _speed)
+     particle_emitter(_position, _nu_particles_per_sec, _particles_lifetime, _friction_particle, _particle_mass, _speed)
     {
       
     }

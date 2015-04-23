@@ -105,7 +105,6 @@ namespace octet {
       particle_emitter *em =new particle_emitter_cone(90,//spread
           vec3(0,1,0),//direction
           vec3(),//position
-          60, //max particles, depricated
           40, //particles per sec
           2.0f, //lifetime
           1.0f,//friction
