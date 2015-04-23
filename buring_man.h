@@ -7,7 +7,7 @@
 
 #include "change_speed_by_distance_pm.h"
 #include "particle_emitter_cone.h"
-
+#include "particle_emitter_sphere.h"
 
 namespace octet {
   /// Scene containing a box with octet.
@@ -102,7 +102,7 @@ namespace octet {
       system.Init(120,app_scene);
 
       
-      particle_emitter *em =new particle_emitter_cone(45,vec3(0,1,0),vec3(),60,40,1.0f,2.0f,1.0f,1.0f);
+      particle_emitter *em =new particle_emitter_sphere(vec3(),60,40,1.0f,2.0f,1.0f,0.01f);
 
       system.Init(1000,app_scene);
      
