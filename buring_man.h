@@ -97,18 +97,25 @@ namespace octet {
       camera_mat.w()=vec4(0,0,20,1);
 
 
-      
 
       system.Init(120,app_scene);
 
       
 
-      particle_emitter *em =new particle_emitter_cone(90,vec3(0,1,0),vec3(),60,40,1.0f,2.0f,1.0f,20.0f);
+      particle_emitter *em =new particle_emitter_cone(90,//spread
+          vec3(0,1,0),//direction
+          vec3(),//position
+          60, //max particles, depricated
+          40, //particles per sec
+          2.0f, //lifetime
+          1.0f,//friction
+          1.0f,//mass
+          10.0f);//speed
 
-
+      system.SetGravity(vec3(0,-0.1,0));
      
-      temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_speed());
-      em->Set_particle_man(temppart);
+     // temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_speed());
+     // em->Set_particle_man(temppart);
       system.AddEmitter(em); 
 
       
@@ -124,12 +131,12 @@ namespace octet {
       app_scene->update(1.0f/30);
       
       system.Update(1.0f/30);
-      system.Draw();
+      system.Draw(app_scene->get_camera_instance(0));
 
       // draw the scene
       app_scene->render((float)vx / vy);
       mat4t &cam=app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
-     // mouse_control(cam);
+      mouse_control(cam);
       key_presses(cam);
     }
   };

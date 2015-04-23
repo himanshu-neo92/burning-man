@@ -190,7 +190,7 @@ namespace octet {
 
                 memset(format, 0, sizeof(format));
 
-                instances = 1;
+                instances = 0;
 
                 num_indices = 0;
                 num_vertices = 0;
@@ -515,7 +515,7 @@ namespace octet {
                 //printf("de %04x %d %d\n", get_mode(), get_num_vertices(), get_index_type());
                 if (get_index_type()) {
                     indices->bind();
-                    if (instances > 1)
+                    if (instances > 0)
                     {
                         glDrawElementsInstanced(get_mode(),get_num_indices(),get_index_type(),(GLvoid*)(get_index_size()*first_index),instances);
                     }
@@ -525,7 +525,7 @@ namespace octet {
                     }
                 }
                 else {
-                    if (instances > 1)
+                    if (instances > 0)
                     {
                         glDrawArraysInstanced(get_mode(),0,get_num_vertices(),instances);
                     }

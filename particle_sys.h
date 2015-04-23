@@ -51,21 +51,18 @@ namespace octet {
             particleColorBuffer_->bind();
             //VEC4 for color
             particleColorBuffer_->allocate(GL_ARRAY_BUFFER, maxParticles_*sizeof(float)*4,GL_DYNAMIC_DRAW);
-
+            glBindBuffer(GL_ARRAY_BUFFER,0);
             particles_.resize(maxParticles_);
             openPool_.reserve(maxParticles_);
 
 
             //init mesh
             meshy_ = new mesh();
-            int size = sizeof(float) * 7;//9 3+4+2
+            int size = sizeof(float) * 3;
             meshy_->allocate(size * 4, 0);
             meshy_->set_params(size, 0, 4, GL_TRIANGLE_STRIP, NULL);
             meshy_->clear_attributes();
             meshy_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
-
-            meshy_->set_num_instances(4);
-
 
             const GLfloat vertData[] = {
                 -0.5f, -0.5f, 0.0f,
@@ -80,18 +77,20 @@ namespace octet {
 
                 memcpy(vtx, &vertData[0], size * 4);
             }
-            //end material
+            //end mesh
             
             //create shader
            sh = new param_shader("src/examples/BurningMan/Particle.vs", "src/examples/BurningMan/Particle_solid.fs");
             
             mat=new material(vec4(1,0,0,1),sh);
+            mat->add_uniform(NULL,atom_cameraToProjection,GL_FLOAT_MAT4,1,param::stage_fragment);
             //end shader
 
             scene_node* sc = new scene_node();
             scene->add_scene_node(sc);
 
             meshInst_ = new mesh_instance(sc,meshy_,mat);
+            scene->add_mesh_instance(meshInst_);
             
             for (int i = 0; i < maxParticles_; ++i)
             {
@@ -122,40 +121,56 @@ namespace octet {
         }
 
 
-
-        //bufferA = new gl_resource();
-
-        //
-        //int loc = glGetAttribLocation(sh->get_program(), "uv");
-        ////setup the instance buffer
-        //
-        //bufferA->bind();
-        //
-        //bufferA->allocate(GL_ARRAY_BUFFER, sizeof(float)*2 * 4, GL_DYNAMIC_DRAW);
-        //bufferA->assign(&uvData[0], 0, sizeof(float)*2 * 4);
-        //
-
-        ////it is now bound and as such these commands work
-        //glVertexAttribPointer(loc, 2, GL_FLOAT, FALSE, 0, NULL);
-        //
-        //glEnableVertexAttribArray(loc);
-        //
-        //glVertexAttribDivisor(loc, 1);
-        void Draw()
+        void Draw(camera_instance* cam)
         {
+
             int posLoc=glGetAttribLocation(sh->get_program(),"particlePos");
             assert(posLoc!=-1);
+
             int colLoc=glGetAttribLocation(sh->get_program(),"particleColor");
-            assert(posLoc!=-1);
-            
+            assert(colLoc != -1);
 
-           gl_resource::wolock at(particlePosBuffer_);
+            mat4t cToP =cam->get_cameraToProjection();
+            mat->set_uniform(mat->get_param_uniform(atom_cameraToProjection),&cToP,sizeof(mat4t));
 
-            for (int i = 0; i < particles_.size(); ++i)
-            {
-                
+            int numAlive = 0;
+            //scope to break locks
+            {//the first scope is the pos lock
+             // the locks need to be broken in reverse order to their setup
+                particlePosBuffer_->bind();
+                gl_resource::wolock pt(particlePosBuffer_);
+                vec3p* pos = (vec3p*)pt.u8();
+
+                {//color lock scope
+                    particleColorBuffer_->bind();
+                    gl_resource::wolock ct(particleColorBuffer_);
+                    vec4* col = (vec4*)ct.u8();
+
+                    for (int i = 0; i < particles_.size(); ++i)
+                    {
+                        if (!particles_[i]->IsDead())
+                        {
+                            *pos++ = particles_[i]->GetPos();
+                            *col++ = particles_[i]->GetColor();
+                            ++numAlive;
+                        }
+                    }
+                }//end of color loc scope
+                particlePosBuffer_->bind();//bind particle to GL_ARRAY_BUFFER for
+                //correct unlocking
             }
+            particlePosBuffer_->bind();
+            glVertexAttribPointer(posLoc,3,GL_FLOAT,FALSE,0,NULL);
+            glEnableVertexAttribArray(posLoc);
+            glVertexAttribDivisor(posLoc,1);
 
+            particleColorBuffer_->bind();
+            glVertexAttribPointer(colLoc, 4, GL_FLOAT, FALSE, 0, NULL);
+            glEnableVertexAttribArray(colLoc);
+            glVertexAttribDivisor(colLoc, 1);
+            glBindBuffer(GL_ARRAY_BUFFER,NULL);
+
+            meshy_->set_num_instances(numAlive);
             //gl resource update
         }
 
@@ -227,9 +242,6 @@ namespace octet {
       dynarray<smtPart> particles_;
       dynarray<smtEmitter> emitters_;
 
-
-      ref<mesh> instanceMesh_;
-
       ref<gl_resource> particlePosBuffer_;
       ref<gl_resource> particleColorBuffer_;
       ref<mesh>  meshy_;
@@ -237,7 +249,6 @@ namespace octet {
 
       ref<material> mat;
       param_shader* sh;
-      
 
       int maxParticles_;
 
