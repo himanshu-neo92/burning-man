@@ -96,9 +96,19 @@ namespace octet {
       mat4t &camera_mat = app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
       camera_mat.w()=vec4(0,0,20,1);
 
+      //Use these variables for manipulating the collider
+      vec3 spherePos=vec3(0,6,0);
+      float sphereRad=3;
+
       collision_sphere *tests = new collision_sphere;
-      tests->_center = vec3(0,-7,0);
-      tests->_rad = 3;
+      tests->_center = spherePos;
+      tests->_rad = sphereRad;
+
+      scene_node* s= new scene_node();
+
+      app_scene->add_scene_node(s);
+      app_scene->add_mesh_instance(new mesh_instance(s,new mesh_sphere(vec3(0,0,0),sphereRad),new material(vec4(1,0,0,0))));
+      s->translate(spherePos);
 
       system.Init(120,app_scene,"assets/andyt.gif");
 
@@ -110,7 +120,7 @@ namespace octet {
           40, //particles per sec
           2.0f, //lifetime
           1.0f,//friction
-          0.3f,//restitution
+          0.5f,//restitution
           1.0f,//mass
           10.0f);//speed
 
@@ -138,7 +148,7 @@ namespace octet {
       // draw the scene
       app_scene->render((float)vx / vy);
       mat4t &cam=app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
-      mouse_control(cam);
+      //mouse_control(cam);
       key_presses(cam);
     }
   };

@@ -147,6 +147,11 @@ namespace octet {
         {
           return pos_-oldPos_;
         }
+
+        void SetVel(vec3 vel)
+        {
+            oldPos_=pos_-vel;
+        }
     private:
         vec3 pos_;
         vec3 oldPos_;

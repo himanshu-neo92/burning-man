@@ -282,12 +282,13 @@ namespace octet {
         {
           for (int i=0;i<collider_.size();i++)
           {
-            if (squared(particle->GetPos().x() - collider_[i]->_center.x()) + squared(particle->GetPos().y() - collider_[i]->_center.y()) + squared(particle->GetPos().z() - collider_[i]->_center.z()) <= squared(squared(0.1f + collider_[i]->_rad)))
+              if ((particle->GetPos()-collider_[i]->_center).squared()<collider_[i]->_rad*collider_[i]->_rad)
             {
               
               vec3 current_vel = particle->Get_vel();
               vec3 nortosurface = vec3(particle->GetPos().x() - collider_[i]->_center.x(), particle->GetPos().y() - collider_[i]->_center.y(), particle->GetPos().z() - collider_[i]->_center.z());
-              nortosurface.normalize();
+              nortosurface=nortosurface.normalize();
+              vec3 nNorm=nortosurface;
               vec3 force_nor = nortosurface * nortosurface.dot(current_vel);
               vec3 force_par = current_vel - force_nor;
 
@@ -298,8 +299,8 @@ namespace octet {
 
 
               vec3 force_to_add = force_nor+force_par;
-              particle->SetPos(particle->GetPos());
-              particle->AddForce(force_to_add);
+              particle->SetPos(collider_[i]->_center+nNorm*collider_[i]->_rad*1.001f);
+              particle->SetVel(force_to_add);
             }
           }
         }
