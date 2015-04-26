@@ -96,11 +96,13 @@ namespace octet {
       mat4t &camera_mat = app_scene->get_camera_instance(0)->get_node()->access_nodeToParent();
       camera_mat.w()=vec4(0,0,20,1);
 
-
+      collision_sphere *tests = new collision_sphere;
+      tests->_center = vec3(0,-7,0);
+      tests->_rad = 3;
 
       system.Init(120,app_scene,"assets/andyt.gif");
 
-      
+      system.AddCollider(tests);
 
       particle_emitter *em =new particle_emitter_cone(90,//spread
           vec3(0,1,0),//direction
@@ -108,7 +110,7 @@ namespace octet {
           40, //particles per sec
           2.0f, //lifetime
           1.0f,//friction
-          1.0f,//restitution
+          0.3f,//restitution
           1.0f,//mass
           10.0f);//speed
 

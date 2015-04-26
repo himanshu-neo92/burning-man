@@ -287,13 +287,14 @@ namespace octet {
               
               vec3 current_vel = particle->Get_vel();
               vec3 nortosurface = vec3(particle->GetPos().x() - collider_[i]->_center.x(), particle->GetPos().y() - collider_[i]->_center.y(), particle->GetPos().z() - collider_[i]->_center.z());
+              nortosurface.normalize();
               vec3 force_nor = nortosurface * nortosurface.dot(current_vel);
               vec3 force_par = current_vel - force_nor;
 
               force_nor *= -1;
 
-              force_nor *= particle->GetFriction();
-              force_par *= particle->GetRestitution();
+              force_par *= particle->GetFriction();
+              force_nor *= particle->GetRestitution();
 
 
               vec3 force_to_add = force_nor+force_par;
