@@ -134,6 +134,19 @@ namespace octet {
         void SetEnabledFlag(bool flag)
         {enabledFlag_=flag;}
 
+        float GetRestitution() const
+        {
+          return res_;
+        }
+        void SetRestitution(float _res)
+        {
+          res_ = _res;
+        }
+
+        vec3 Get_vel()
+        {
+          return pos_-oldPos_;
+        }
     private:
         vec3 pos_;
         vec3 oldPos_;
@@ -146,6 +159,7 @@ namespace octet {
         float invMass_;
         float lifetime_;
         float friction_;
+        float res_;
         bool enabledFlag_;
     };
 }

@@ -108,6 +108,7 @@ namespace octet {
           40, //particles per sec
           2.0f, //lifetime
           1.0f,//friction
+          1.0f,//restitution
           1.0f,//mass
           10.0f);//speed
 

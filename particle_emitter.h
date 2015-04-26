@@ -15,7 +15,11 @@ namespace octet {
         float friction_particle;
         float particle_mass;
         float speed;
+
         vec4 color;
+
+        float res_;
+
 
         float dt_accumalation;
 
@@ -24,16 +28,19 @@ namespace octet {
         Particle_man* particle_manager;
     public:
 
-        particle_emitter(vec3 _position,
-            float _nu_particles_per_sec = 20, float _particles_lifetime = 0.8f,
-            float _friction_particle = 1.0f, float _particle_mass = 1.0f, float _speed = 1.0f) :
-            color(0.4, 0.4, 0.4, 1)
+
+       
+      particle_emitter(vec3 _position, int _max_particles = 1, 
+      float _nu_particles_per_sec = 1, float _particles_lifetime = 0.1f,
+       float _friction_particle = 1.0f,float _res =1.0f, float _particle_mass = 1.0f, float _speed=1.0f)
         {
             position = _position;
             nu_particles_per_sec = _nu_particles_per_sec;
             particles_lifetime = _particles_lifetime;
             friction_particle = _friction_particle;
-            speed = _speed;
+
+            speed=_speed;
+            res_ = _res;
 
             particle_mass = _particle_mass;
             dt_accumalation = 0.0f;
@@ -73,6 +80,7 @@ namespace octet {
             particles_lifetime = _particles_lifetime;
         }
 
+
         float Get_speed() const
         {
             return speed;
@@ -90,14 +98,24 @@ namespace octet {
             friction_particle = _friction_particle;
         }
 
-        float Get_mass_particle() const
-        {
-            return particle_mass;
-        }
-        void Set_mass_particle(float mass)
-        {
-            particle_mass = mass;
-        }
+    float GetRestitution() const
+    {
+      return res_;
+    }
+    void SetRestitution(float _res)
+    {
+      res_ = _res;
+    }
+
+    float Get_mass_particle() const 
+    {
+      return particle_mass;
+    }
+    void Set_mass_particle(float mass)
+    {
+      particle_mass=mass;
+    }
+
         void Set_particle_color(const vec4& col)
         {
             color = col;
@@ -127,8 +145,7 @@ namespace octet {
 
 
         int Update(float dt)
-        {
-
+        {            
             if (particle_manager != nullptr)
             {
                 particle_manager->Update_particles();
@@ -159,7 +176,7 @@ namespace octet {
                 spawn_particles->SetPos(position);
                 spawn_particles->Set_acc(vec3(0, 0, 0));
                 spawn_particles->SetColor(color);
-
+                spawn_particles->SetRestitution(res_);
                 create_shape(spawn_particles);
 
                 if (particle_manager != nullptr)
@@ -175,5 +192,4 @@ namespace octet {
         }
     };
 }
-
 #endif

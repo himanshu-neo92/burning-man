@@ -14,8 +14,8 @@ namespace octet {
 
     particle_emitter_cone(float _spread = 1.0f, vec3 _direction = vec3(0, 0, 1),
     vec3 _position = vec3(0,0,0), float _nu_particles_per_sec = 1, float _particles_lifetime = 0.1f, 
-    float _friction_particle = 1.0f, float _particle_mass = 1.0f,float _speed = 1.0f) : 
-    particle_emitter(_position, _nu_particles_per_sec, _particles_lifetime, _friction_particle, _particle_mass, _speed)
+    float _friction_particle = 1.0f,float res_=1.0f, float _particle_mass = 1.0f,float _speed = 1.0f) : 
+    particle_emitter(_position, _nu_particles_per_sec, _particles_lifetime, _friction_particle,res_ ,_particle_mass, _speed)
     {
       direction = _direction;
       spread = _spread;
