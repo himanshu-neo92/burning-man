@@ -239,7 +239,6 @@ namespace octet {
                 }
                 else if(particles_[i]->GetEnabledFlag())
                 {
-                    
                     particles_[i]->AddForce(gravity_+SumForces());
                     particles_[i]->Update(dt);
                     calculate_coll_test(particles_[i]);
