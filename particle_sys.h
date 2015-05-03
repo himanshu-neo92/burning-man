@@ -12,11 +12,43 @@
 
 namespace octet {
 
-  struct collision_sphere 
+  
+
+  class particle_collider
   {
-    float _rad;
-    vec3 _center;
-    
+  public:
+      virtual bool TestCollision(Particle*)=0;
+      virtual void ResolveCollision(Particle *)=0;
+  };
+
+  struct collision_sphere :particle_collider
+  {
+      float _rad;
+      vec3 _center;
+      bool TestCollision(Particle* p)
+      {
+          return ((p->GetPos() - _center).squared()<_rad*_rad);
+      }
+      void ResolveCollision(Particle* p)
+      {
+              vec3 current_vel = p->Get_vel();
+              vec3 nortosurface = vec3(p->GetPos().x() - _center.x(), p->GetPos().y() - _center.y(), p->GetPos().z() - _center.z());
+              nortosurface = nortosurface.normalize();
+              vec3 nNorm = nortosurface;
+              vec3 force_nor = nortosurface * nortosurface.dot(current_vel);
+              vec3 force_par = current_vel - force_nor;
+
+              force_nor *= -1;
+
+              force_par *= p->GetFriction();
+              force_nor *= p->GetRestitution();
+
+
+              vec3 force_to_add = force_nor + force_par;
+              p->SetPos(_center + nNorm*_rad*1.001f);
+              p->SetVel(force_to_add);
+      }
+
   };
     class particle_sys :public resource
     {
@@ -144,7 +176,7 @@ namespace octet {
 
         
 
-        int AddCollider(collision_sphere* cs)
+        int AddCollider(particle_collider* cs)
         {
           if (cs)
           {
@@ -153,7 +185,7 @@ namespace octet {
           }
         }
 
-        collision_sphere* GetCollider(unsigned index)
+        particle_collider* GetCollider(unsigned index)
         {
           if (index < collider_.size())
           {
@@ -282,26 +314,10 @@ namespace octet {
         {
           for (int i=0;i<collider_.size();i++)
           {
-              if ((particle->GetPos()-collider_[i]->_center).squared()<collider_[i]->_rad*collider_[i]->_rad)
-            {
-              
-              vec3 current_vel = particle->Get_vel();
-              vec3 nortosurface = vec3(particle->GetPos().x() - collider_[i]->_center.x(), particle->GetPos().y() - collider_[i]->_center.y(), particle->GetPos().z() - collider_[i]->_center.z());
-              nortosurface=nortosurface.normalize();
-              vec3 nNorm=nortosurface;
-              vec3 force_nor = nortosurface * nortosurface.dot(current_vel);
-              vec3 force_par = current_vel - force_nor;
-
-              force_nor *= -1;
-
-              force_par *= particle->GetFriction();
-              force_nor *= particle->GetRestitution();
-
-
-              vec3 force_to_add = force_nor+force_par;
-              particle->SetPos(collider_[i]->_center+nNorm*collider_[i]->_rad*1.001f);
-              particle->SetVel(force_to_add);
-            }
+              if (collider_[i]->TestCollision(particle))
+              {
+                collider_[i]->ResolveCollision(particle);
+              }
           }
         }
     private:
@@ -315,7 +331,7 @@ namespace octet {
       ref<gl_resource> particleColorBuffer_;
 
 
-      dynarray<collision_sphere *> collider_;
+      dynarray<particle_collider *> collider_;
 
       ref<mesh> instanceMesh_;
 
