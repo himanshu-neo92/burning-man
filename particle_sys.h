@@ -1,3 +1,4 @@
+
 #ifndef PARTICLE_SYSTEM_H
 #define PARTICLE_SYSTEM_H
 
@@ -357,5 +358,3 @@ namespace octet {
       dynarray<vec3> forces_;
     };
 }
-
-#endif
