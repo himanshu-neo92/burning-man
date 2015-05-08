@@ -215,7 +215,9 @@
     <ClInclude Include="..\..\shaders\shader.h" />
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
+    <ClInclude Include="buring_man.h" />
     <ClInclude Include="change_speed_by_distance_pm.h" />
+    <ClInclude Include="firework_pm.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="particle_emitter.h" />
     <ClInclude Include="particle_emitter_cone.h" />

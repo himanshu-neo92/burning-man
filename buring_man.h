@@ -8,7 +8,7 @@
 #include "change_speed_by_distance_pm.h"
 #include "particle_emitter_cone.h"
 #include "particle_emitter_sphere.h"
-
+#include "firework_pm.h"
 namespace octet {
   /// Scene containing a box with octet.
   class buring_man : public app {
@@ -110,15 +110,14 @@ namespace octet {
       app_scene->add_mesh_instance(new mesh_instance(s,new mesh_sphere(vec3(0,0,0),sphereRad),new material(vec4(1,0,0,0))));
       s->translate(spherePos);
 
-      system.Init(120,app_scene,"assets/andyt.gif");
+      system.Init(100000,app_scene,"assets/particle_base.jpg");
 
       system.AddCollider(tests);
 
-      particle_emitter *em =new particle_emitter_cone(90,//spread
-          vec3(0,1,0),//direction
+      particle_emitter *em = new particle_emitter_cone(90, vec3(0,1,0),
           vec3(),//position
-          40, //particles per sec
-          2.0f, //lifetime
+          8, //particles per sec
+          1.0f, //lifetime
           1.0f,//friction
           0.5f,//restitution
           1.0f,//mass
@@ -126,11 +125,11 @@ namespace octet {
 
       system.SetGravity(vec3(0,-0.1,0));
      
-     // temppart = new change_speed_by_distance_pm(em->Get_position(),em->Get_particles_lifetime(), em->Get_mass_particle(),em->Get_speed());
-     // em->Set_particle_man(temppart);
-      system.AddEmitter(em); 
-
       
+     
+      int emitter_num = system.AddEmitter(em);     
+      temppart = new firework_pm(&system, emitter_num, 1.2f,em,0, em->Get_position(), em->Get_particles_lifetime(), em->Get_mass_particle(), em->Get_speed());
+      em->Set_particle_man(temppart);
     }
 
     /// this is called to draw the world

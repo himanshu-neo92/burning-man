@@ -175,7 +175,7 @@ namespace octet {
                 spawn_particles->SetLifetime(particles_lifetime);
                 spawn_particles->SetPos(position);
                 spawn_particles->Set_acc(vec3(0, 0, 0));
-                spawn_particles->SetColor(color);
+                spawn_particles->SetColor(vec4((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX, 1));
                 spawn_particles->SetRestitution(res_);
                 create_shape(spawn_particles);
 

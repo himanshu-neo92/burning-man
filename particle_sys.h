@@ -66,13 +66,13 @@ namespace octet {
             meshy_->add_attribute(octet::attribute_pos, 3, GL_FLOAT, 0);
             meshy_->add_attribute(octet::attribute_uv, 2, GL_FLOAT, 12);
             const GLfloat vertData[] = {
-                -0.5f, -0.5f, 0.0f,
+                -0.02f, -0.02f, 0.0f,
                 0.0f, 0.0f,
-                0.5f, -0.5f, 0.0f,
+                0.02f, -0.02f, 0.0f,
                 1.0f, 0.0f,
-                -0.5f, 0.5f, 0.0f,
+                -0.02f, 0.02f, 0.0f,
                 0.0f, 1.0f,
-                0.5f, 0.5f, 0.0f,
+                0.02f, 0.02f, 0.0f,
                 1.0f, 1.0f
             };
 
@@ -124,20 +124,37 @@ namespace octet {
         {
             if (em)
             {
-                emitters_.push_back(em);
-                return emitters_.size()-1;//index of the emitter is the new size -1
+                emitters_.push_back(new std::pair<int,smtEmitter>(emitters_.size(),em));
+                return emitters_.back()->first;
             }
             return 0;
         }
 
-
+        void RemoveEmitter(int n)
+        {
+          for (int i = 0; i<emitters_.size();++i)
+          {
+            if (emitters_[i]->first==n)
+            {
+              if (emitters_.size()-1!=i)
+              {
+                  swap_ptrs(emitters_[i], emitters_.back());
+              }
+              delete emitters_.back()->second;
+              emitters_.pop_back();
+              }
+          }
+        }
         smtEmitter GetEmitter(unsigned index)
         {
-            if (index < emitters_.size())
+          for (int i = 0; i<emitters_.size();++i)
+          {
+            if (emitters_[i]->first==index)
             {
-                return emitters_[index];
+                return emitters_[i]->second;
             }
 
+            }
             return nullptr;//no emmiter at index
         }
 
@@ -220,12 +237,12 @@ namespace octet {
             
             for (int i = 0; i < emitters_.size(); ++i)
             {
-                int num=emitters_[i]->Update(dt);
+                int num=emitters_[i]->second->Update(dt);
                 if (num > 0)
                 {
                     for (int j= 0; j < num; ++j)
                     {
-                       emitters_[i]->Spawn_particle(GetNewParticle());
+                       emitters_[i]->second->Spawn_particle(GetNewParticle());
                     }
                 }
             }
@@ -244,7 +261,7 @@ namespace octet {
                     calculate_coll_test(particles_[i]);
                 }
             }
-            printf("%d\n",openPool_.size());
+          //  printf("%d\n",openPool_.size());
         }
 
         void SetGravity(const vec3& v)
@@ -305,10 +322,17 @@ namespace octet {
           }
         }
     private:
+
+      void swap_ptrs(std::pair<int, smtEmitter>* a, std::pair<int, smtEmitter>*  b)
+      {
+        std::pair<int, smtEmitter>* t = a;
+        a = b;
+        b = t;
+      }
       dynarray<Particle*> openPool_;
 
       dynarray<smtPart> particles_;
-      dynarray<smtEmitter> emitters_;
+      dynarray<std::pair<int,smtEmitter>*> emitters_;
 
 
       ref<gl_resource> particlePosBuffer_;

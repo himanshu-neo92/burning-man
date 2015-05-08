@@ -26,7 +26,11 @@ namespace octet {
 
         virtual ~Particle_man()
         {
-
+          while (particle_pointers.size() > 0)
+          {
+            particle_pointers.pop_back();
+          }
+          
         }
         Particle_man(vec3 pos, vec3 dir, float lifetime, float mass, float speed)
         {
