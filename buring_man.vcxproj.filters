@@ -446,6 +446,9 @@
     <ClInclude Include="buring_man.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="particle_emitter_mesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

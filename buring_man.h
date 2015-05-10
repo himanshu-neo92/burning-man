@@ -9,12 +9,14 @@
 #include "particle_emitter_cone.h"
 #include "particle_emitter_sphere.h"
 #include "firework_pm.h"
+#include "particle_emitter_mesh.h"
 namespace octet {
   /// Scene containing a box with octet.
   class buring_man : public app {
     // scene for drawing box
     ref<visual_scene> app_scene;
     particle_sys system;
+    collada_builder loader;
     struct my_vertex {
       vec3p pos;
       vec3p nor;
@@ -114,22 +116,41 @@ namespace octet {
 
       system.AddCollider(tests);
 
-      particle_emitter *em = new particle_emitter_cone(90, vec3(0,1,0),
-          vec3(),//position
-          8, //particles per sec
-          1.0f, //lifetime
-          1.0f,//friction
-          0.5f,//restitution
-          1.0f,//mass
-          10.0f);//speed
 
-      system.SetGravity(vec3(0,-0.1,0));
-     
+      resource_dict dict;
+      if (!loader.load_xml("assets/duck_triangulate.dae")) {
+        // failed to load file
+        return;
+      }
+      loader.get_resources(dict);
+      dynarray<resource*> meshes;
+      dict.find_all(meshes, atom_mesh);
       
-     
-      int emitter_num = system.AddEmitter(em);     
-      temppart = new firework_pm(&system, emitter_num, 1.2f,em,0, em->Get_position(), em->Get_particles_lifetime(), em->Get_mass_particle(), em->Get_speed());
-      em->Set_particle_man(temppart);
+
+      particle_emitter *em = new particle_emitter_mesh(meshes[0]->get_mesh(), vec3(0, 1, 0),
+            vec3(),//position
+            100000, //particles per sec
+            2.0f, //lifetime
+            1.0f,//friction
+            0.5f,//restitution
+            1.0f,//mass
+            10.0f);//speed
+        system.SetGravity(vec3(0,0.1,0));     
+        int emitter_num = system.AddEmitter(em); 
+      
+      //particle_emitter *em = new particle_emitter_cone(90, vec3(0,1,0),
+      //    vec3(),//position
+      //    8, //particles per sec
+      //    1.0f, //lifetime
+      //    1.0f,//friction
+      //    0.5f,//restitution
+      //    1.0f,//mass
+      //    10.0f);//speed
+      //system.SetGravity(vec3(0,-0.1,0));     
+      //int emitter_num = system.AddEmitter(em);     
+      //temppart = new firework_pm(&system, emitter_num, 1.2f,em,0, em->Get_position(), em->Get_particles_lifetime(), em->Get_mass_particle(), em->Get_speed());
+      //em->Set_particle_man(temppart);
+
     }
 
     /// this is called to draw the world

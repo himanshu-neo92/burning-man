@@ -221,6 +221,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="particle_emitter.h" />
     <ClInclude Include="particle_emitter_cone.h" />
+    <ClInclude Include="particle_emitter_mesh.h" />
     <ClInclude Include="particle_emitter_sphere.h" />
     <ClInclude Include="Particle_man.h" />
     <ClInclude Include="particle_sys.h" />
