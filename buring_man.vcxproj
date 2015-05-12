@@ -225,6 +225,7 @@
     <ClInclude Include="particle_emitter_sphere.h" />
     <ClInclude Include="Particle_man.h" />
     <ClInclude Include="particle_sys.h" />
+    <ClInclude Include="recreate_mesh_pm.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl" />

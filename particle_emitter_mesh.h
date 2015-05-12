@@ -12,6 +12,7 @@ namespace octet {
     vec3* mesh_vert;
     int vert_num;
     vec3* mesh_vert_temp;
+
     void create_heap(vec3 a[], int size)
     {
       for (int i = 0; i<size; ++i)
@@ -95,7 +96,7 @@ namespace octet {
       float _friction_particle = 1.0f, float res_ = 1.0f, float _particle_mass = 1.0f, float _speed = 1.0f) :
       particle_emitter(_position, _nu_particles_per_sec, _particles_lifetime, _friction_particle, res_, _particle_mass, _speed)
     {
-      direction = _direction;
+      direction = _direction*_speed;
       
       vert_num = newmesh->get_num_vertices();
       mesh_vert = new vec3[vert_num];
@@ -103,14 +104,6 @@ namespace octet {
       vert_srt(mesh_vert, vert_num);
 
       mesh_vert_temp = mesh_vert;
-
-      for (int i = 0; i<vert_num;++i)
-      {
-        printf("\n  vert : %f,%f,%f", mesh_vert_temp->x(), mesh_vert_temp->y(), mesh_vert_temp->z());
-        mesh_vert_temp++;
-      }
-      mesh_vert_temp = mesh_vert;
-
     }
     ~particle_emitter_mesh()
     {
@@ -121,8 +114,9 @@ namespace octet {
     {
       static int vert_index = 0;
       vec3 emmiter_pos = Get_position();
-      spawn_particles->SetPos(vec3(emmiter_pos.x() + mesh_vert_temp->x(), emmiter_pos.y(), emmiter_pos.z() + mesh_vert_temp->z()));
+      spawn_particles->SetPos(vec3(  (emmiter_pos.x() + mesh_vert_temp->x()) / 20, (emmiter_pos.z() + mesh_vert_temp->z()) / 20, emmiter_pos.y()));
 
+      
       spawn_particles->SetForce(direction);
       if (vert_index == vert_num)
       {

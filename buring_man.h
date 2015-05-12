@@ -10,6 +10,7 @@
 #include "particle_emitter_sphere.h"
 #include "firework_pm.h"
 #include "particle_emitter_mesh.h"
+#include "recreate_mesh_pm.h"
 namespace octet {
   /// Scene containing a box with octet.
   class buring_man : public app {
@@ -17,6 +18,9 @@ namespace octet {
     ref<visual_scene> app_scene;
     particle_sys system;
     collada_builder loader;
+    dynarray<resource*> meshes;
+
+    Particle_man* _Recreate;
     struct my_vertex {
       vec3p pos;
       vec3p nor;
@@ -88,6 +92,7 @@ namespace octet {
     ~buring_man()
     {
       delete temppart;
+      delete _Recreate;
     }
     
     // this is called once OpenGL is initialized
@@ -122,22 +127,23 @@ namespace octet {
         // failed to load file
         return;
       }
-      loader.get_resources(dict);
-      dynarray<resource*> meshes;
+      loader.get_resources(dict);      
       dict.find_all(meshes, atom_mesh);
-      
+      int verts_in_mesh = meshes[0]->get_mesh()->get_num_vertices();
 
       particle_emitter *em = new particle_emitter_mesh(meshes[0]->get_mesh(), vec3(0, 1, 0),
             vec3(),//position
-            100000, //particles per sec
-            2.0f, //lifetime
+            verts_in_mesh, //particles per sec
+            3.0f, //lifetime
             1.0f,//friction
             0.5f,//restitution
             1.0f,//mass
-            10.0f);//speed
+            2.0f);//speed
         system.SetGravity(vec3(0,0.1,0));     
         int emitter_num = system.AddEmitter(em); 
       
+  //      _Recreate = new recreate_mesh_pm(verts_in_mesh, em->Get_position(), em->Get_particles_lifetime(), em->Get_mass_particle(), em->Get_speed());
+//        em->Set_particle_man(_Recreate);
       //particle_emitter *em = new particle_emitter_cone(90, vec3(0,1,0),
       //    vec3(),//position
       //    8, //particles per sec
